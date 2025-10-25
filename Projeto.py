@@ -1,12 +1,13 @@
 import ipaddress
 import random
+from textwrap import dedent
 
-regua = [128,64,32,16,8,4,2,1]
+ruler = [128,64,32,16,8,4,2,1]
 tools = ["1. Conversão de IP (Decimal para Binário)", 
          "2. Conversão de IP (Binário para Decimal)", 
          "3. Cálculo da Máscara de Rede/CIDR", 
          "4. Classicação de IPs (Privado vs Público)", 
-         "5. Régua de Bits"
+         "5. Quiz"
          ]
 
 def defaultDecimalIP():
@@ -29,7 +30,7 @@ def mainHeader():
 def resultHeader():
     print()
     print("=" * 50)
-    print("Resultado")
+    print("*** Resultado ***")
 
 def resultFooter():
     print("=" * 50, "\n")
@@ -73,25 +74,30 @@ def tool(option):
         while True:
             try:
                 hosts = int(input("Insira o número de dispositivos necessários: "))
-                decimalIP = input("Insira um endereço de IPv4 dentro da rede: ")
-                ip = ('{:b}'.format(ipaddress.IPv4Address(decimalIP)))
-                totalHosts = hosts + 2
-                bits = 0
-                while (2 ** bits) < totalHosts:
-                    bits += 1
-                cidr = 32 - bits
-                network = ipaddress.ip_network(f"{ip}/{cidr}")
-                resultHeader()
-                print(f"""Máscara de Rede Adequeada: {network.netmask}
-                CIDR adequado: /{cidr}
-                Número de IPs disponíveis: {network.num_addresses - 2}
-                IP da rede: {network.network_address}
-                Primero IP Disponível: {network.hosts[1]}
-                Último IP Disponível: {network.hosts[-1]}
-                IP de Broadcast: {network.broadcast_address}""")
-                resultFooter()
             except ValueError:
-                print("Insira um número inteiro")
+                print("Insira apenas números inteiros")
+            totalHosts = hosts + 2
+            bits = 0
+            while (2 ** bits) < totalHosts:
+                bits += 1
+            cidr = 32 - bits
+            while True:
+                try:
+                    decimalIP = input("Insira o IPv4 da rede: ")
+                    ip = ipaddress.IPv4Address(decimalIP)
+                    network = ipaddress.ip_network(f"{ip}/{cidr}")
+                    resultHeader()
+                    print(dedent(f"""\
+                    Máscara de Rede Adequeada: {network.netmask}
+                    CIDR adequado: /{cidr}
+                    Número de IPs disponíveis: {network.num_addresses - 2}
+                    IP da rede: {network.network_address}
+                    Primero IP Disponível: {ipaddress.IPv4Network(network)[1]}
+                    Último IP Disponível: {ipaddress.IPv4Network(network)[-2]}
+                    IP de Broadcast: {network.broadcast_address}"""))
+                    resultFooter()
+                except (ValueError, UnboundLocalError):
+                    print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
     elif option == 4:
         toolHeader()
         while True:
@@ -109,7 +115,7 @@ def tool(option):
                 print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
     elif option == 5:
         toolHeader()
-        print(regua)
+        print(ruler)
         resultFooter()
 
 def menu():
