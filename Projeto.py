@@ -2,6 +2,7 @@ import ipaddress
 import random
 from textwrap import dedent
 
+users = {}
 ruler = [128,64,32,16,8,4,2,1]
 tools = ["1. Conversão de IP (Decimal para Binário)", 
          "2. Conversão de IP (Binário para Decimal)", 
@@ -9,6 +10,12 @@ tools = ["1. Conversão de IP (Decimal para Binário)",
          "4. Classicação de IPs (Privado vs Público)", 
          "5. Quiz"
          ]
+
+def login():
+    return "Hello"
+
+def signin():
+    return "Welcome"
 
 def defaultDecimalIP():
     randIP = []
