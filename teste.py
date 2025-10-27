@@ -3,9 +3,6 @@ import random
 import getpass
 import hashlib
 
-usernames = []
-passwords = []
-
 database = {'luis': {'password': '11a4a60b518bf24989d481468076e5d5982884626aed9faeb35b8576fcd223e1', 'role': 'user'}, 'diogo': {'password': 'c1cc69e61c0f1c7ade8df0f2994e582e7c1f2c57d1ec192a0baf9f96b7739d9d', 'role': 'user'}}
 def addUser():
     username = input("Enter username: ")
