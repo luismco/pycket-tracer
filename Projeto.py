@@ -39,10 +39,6 @@ def resultHeader():
     print("=" * 50)
     print("*** Resultado ***")
 
-def resultFooter():
-    print("=" * 50, "\n")
-    submenu()
-
 def toolHeader():
     print()
     print("=" * 50)
@@ -60,7 +56,8 @@ def tool(option):
                 ip = ('{:b}'.format(ipaddress.IPv4Address(decimalIP)))
                 resultHeader()
                 print(f"IP em formato binário: {ip[0:9]}.{ip[9:17]}.{ip[17:25]}.{ip[25:33]}")
-                resultFooter()
+                print("=" * 50, "\n")
+                submenu()
             except ValueError:
                 print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
     elif option == 2:
@@ -73,7 +70,8 @@ def tool(option):
                 ip = ipaddress.IPv4Address(binaryIP)
                 resultHeader()
                 print(f"IP em formato decimal: {ip}")
-                resultFooter()
+                print("=" * 50, "\n")
+                submenu()
             except ValueError:
                 print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
     elif option == 3:
@@ -102,7 +100,8 @@ def tool(option):
                     Primero IP Disponível: {ipaddress.IPv4Network(network)[1]}
                     Último IP Disponível: {ipaddress.IPv4Network(network)[-2]}
                     IP de Broadcast: {network.broadcast_address}"""))
-                    resultFooter()
+                    print("=" * 50, "\n")
+                    submenu()
                 except (ValueError, UnboundLocalError):
                     print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
     elif option == 4:
@@ -113,17 +112,20 @@ def tool(option):
                 if ipaddress.IPv4Address(ip).is_private is True:
                     resultHeader()
                     print(f"O IP '{ip}' é um IP Privado")
-                    resultFooter()
+                    print("=" * 50, "\n")
+                    submenu()
                 else:
                     resultHeader()
                     print(f"O IP '{ip}' é um IP Público")
-                    resultFooter()
+                    print("=" * 50, "\n")
+                    submenu()
             except ValueError:
                 print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
     elif option == 5:
         toolHeader()
         print(ruler)
-        resultFooter()
+        print("=" * 50, "\n")
+        submenu()
 
 def menu():
         global option
