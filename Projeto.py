@@ -3,6 +3,12 @@ import random
 from textwrap import dedent
 import hashlib
 import getpass
+import string
+
+lowercase = string.ascii_lowercase
+uppercase = string.ascii_uppercase
+numbers = string.digits
+special = string.punctuation
 
 database = {
     'luis': {'password': '20f15cfb78a1c83af3bd7976a78952ea1b1ed435a706bb04ba2c83c7fd0a4965', 'role': 'admin'}, 
@@ -19,8 +25,10 @@ tools = ["1. Conversão de IP (Decimal para Binário)",
          "7. Administração de Utilizadores"
         ]
 
+current_user = None
+
 def administration():
-    print(dedent(f"""\
+    print(dedent(f"""
         {"=" * 50}
         Administração de Utilizadores
         {"=" * 50}
@@ -40,11 +48,13 @@ def administration():
             elif int(main_option) == 2:
                 removeUser()
             elif int(main_option) == 3:
-                print(dedent(f"""\
+                print(dedent(f"""
                     {"=" * 50}
                     Lista de Utilizadores
                     {"=" * 50}
                     {list(database.keys())}"""))
+                input("\nClique enter para voltar ao menu anterior")
+                administration()
             elif int(main_option) == 4:
                 changePassword()
             elif int(main_option) == 5:
@@ -59,11 +69,12 @@ def removeUser():
         {"=" * 50}
         Remover Utilizador
         {"=" * 50}"""))
+    print(current_user)
     while True:
         username_input = input("Utilizador a remover: ")
         if username_input == "":
            exit()
-        elif username_input is current_user:
+        elif username_input == current_user:
             print("Não pode eliminar o utilizador atual")
         elif username_input in database:
             while True:
@@ -73,7 +84,7 @@ def removeUser():
                     1. Sim
                     2. Não
                     """))
-                    if remove_confirm == 1:
+                    if int(remove_confirm) == 1:
                         database.pop(username_input)
                         administration()
                     else:
@@ -84,7 +95,7 @@ def removeUser():
         else:
             print("Utilizador não encontrado")
 def changePassword():
-    return True
+    
 def changeRole():
     return True
 
@@ -137,20 +148,63 @@ def login():
                         print("Atingiu o número máximo de tentativas")
 
 def signin():
-    username_input = input("Utilizador: ")
-    password = getpass.getpass().encode()
-    sha256 = hashlib.sha256()
-    sha256.update(password)
-    hashed_password = sha256.hexdigest()
-    database[username_input] = {
-        'password': hashed_password,
-        'role':'user'
-        }
-    print(f"Login para o utilizador {username_input} criado com sucesso")
-    if current_user is not 
-        administration()
+    print(dedent(f"""
+        {"=" * 50}
+        Registar Novo Utilizador
+        {"=" * 50}"""))
+    while True:           
+        username_input = input("Utilizador: ")
+        if username_input == "" or len(username_input) < 3:
+            print("Insira pelo menos 3 caracteres")
+        else:
+            break
+    if username_input not in database:
+        while True:
+            password = getpass.getpass()
+            if len(password) < 8:
+                print("A password tem que ter um mínimo de 8 caracteres")
+            else:
+                lowercase_check = False
+                uppercase_check = False
+                numbers_check = False
+                special_check = False
+                for char in password:
+                    if char in lowercase:
+                        lowercase_check = True
+                    elif char in uppercase:
+                        uppercase_check = True
+                    elif char in numbers:
+                        numbers_check = True
+                    elif char in special:
+                        special_check = True
+                if all([lowercase_check, uppercase_check, numbers_check, special_check]):
+                    break
+                else:
+                    print(dedent(f"""
+                        *** Requisitos para a password ***
+                        A password deve conter letras minúsculas, maiúsculas, números e caracteres especias ({special})
+                        """))
+        password = password.encode()
+        sha256 = hashlib.sha256()
+        sha256.update(password)
+        hashed_password = sha256.hexdigest()
+        database[username_input] = {
+            'password': hashed_password,
+            'role':'user'
+            }
+        print(f"\nLogin para o utilizador {username_input} criado com sucesso!")
+        if current_user is None:
+            login()
+        else:
+            administration()
     else:
-        login()
+        print(f"O utilizador {username_input} já existe")
+        input("\nClique enter para voltar ao menu anterior")
+        if current_user is None:
+            mainHeader()
+        else:
+            administration()
+        
 
 def defaultDecimalIP():
     randIP = []
@@ -296,7 +350,7 @@ def menu():
             print(*tools[:-1],sep="\n")
         while True:
             try:
-                option = input("Selecione a ferramenta desejada (Clique enter para sair): ")
+                option = input("\nSelecione a ferramenta desejada (Clique enter para sair): ")
                 if option == "":
                     exit()
                 if database[current_user]['role'] == 'admin':
