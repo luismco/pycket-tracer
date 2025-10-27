@@ -33,6 +33,7 @@ current_user = None
 #########################
 
 def mainHeader():
+    print("\033c", end="")
     print(dedent(f"""\
         {"=" * 50}
         Projeto Final Python
@@ -57,6 +58,7 @@ def mainHeader():
             print("Insira apenas opções entre 1 e 2")
 
 def menu():
+        print("\033c", end="")
         global option
         print(dedent(f"""
             {"=" * 50}
@@ -106,6 +108,7 @@ def submenu():
             print("Insira apenas opções entre 0 e 1")
 
 def administration():
+    print("\033c", end="")
     print(dedent(f"""
         {"=" * 50}
         Administração de Utilizadores
@@ -126,6 +129,7 @@ def administration():
             elif int(main_option) == 2:
                 removeUser()
             elif int(main_option) == 3:
+                print("\033c", end="")
                 print(dedent(f"""
                     {"=" * 50}
                     Lista de Utilizadores
@@ -162,6 +166,7 @@ def toolHeader():
 ######################
 
 def login():
+    print("\033c", end="")
     global username_input
     print(dedent(f"""
         {"=" * 50}
@@ -182,6 +187,7 @@ def login():
     menu()
 
 def signin():
+    print("\033c", end="")
     print(dedent(f"""
         {"=" * 50}
         Registar Novo Utilizador
@@ -199,20 +205,21 @@ def signin():
             'role':'user'
             }
         print(f"\nLogin para o utilizador '{username_input}' criado com sucesso!")
+        input("\nClique enter para voltar ao menu anterior")
         if current_user is None:
             login()
         else:
             administration()
     else:
         print(f"O utilizador {username_input} já existe")
-        print("\nClique enter para voltar ao menu anterior")
-        input()
+        input("\nClique enter para voltar ao menu anterior")
         if current_user is None:
             mainHeader()
         else:
             administration()
 
 def removeUser():
+    print("\033c", end="")
     print(dedent(f"""
         {"=" * 50}
         Remover Utilizador
@@ -234,6 +241,8 @@ def removeUser():
                     Selecione a opção desejada: """))
                     if int(remove_confirm) == 1:
                         database.pop(username_input)
+                        print(f"\nUtilizador '{username_input}' removido com sucesso!")
+                        input("\nClique enter para voltar ao menu anterior")
                         administration()
                     else:
                         administration()
@@ -244,6 +253,7 @@ def removeUser():
             print("Utilizador não encontrado")
 
 def changePasswordAdmin():
+    print("\033c", end="")
     print(dedent(f"""
         {"=" * 50}
         Alteração de Password
@@ -260,9 +270,11 @@ def changePasswordAdmin():
     password_get()
     database[username_input]['password'] = hashed_password
     print(f"\nA password do utilizador '{username_input}' foi atualizada com sucesso!")
+    input("\nClique enter para voltar ao menu anterior")
     administration()
 
 def changePassword():
+    print("\033c", end="")
     print(dedent(f"""
         {"=" * 50}
         Alteração de Password
@@ -273,9 +285,11 @@ def changePassword():
     password_get()
     database[current_user]['password'] = hashed_password
     print(f"\nA sua password foi atualizada com sucesso!")
+    input("\nClique enter para voltar ao menu anterior")
     menu()
         
 def changeRole():
+    print("\033c", end="")
     print(dedent(f"""
         {"=" * 50}
         Alteração de Permissões
@@ -306,9 +320,11 @@ def changeRole():
             if int(role_option) == 1:
                 database[username_input]['role'] = new_role
                 print(f"\nAs permissões do utilizador '{username_input}' foram alteradas com sucesso!")
+                input("\nClique enter para voltar ao menu anterior")
                 break
             elif int(role_option) == 2:
                 print(f"As permissões do utilizador '{username_input}' foram mantidas!")
+                input("\nClique enter para voltar ao menu anterior")
                 break
             else:
                 print("Insira apenas opções entre 1 e 2")
@@ -380,6 +396,7 @@ def password_check():
                         print("Atingiu o número máximo de tentativas")
 
 def tool(option):
+    print("\033c", end="")
     if option == 1:
         toolHeader()
         while True:
