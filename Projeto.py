@@ -27,6 +27,84 @@ tools = ["1. Conversão de IP (Decimal para Binário)",
 
 current_user = None
 
+
+#########################
+### Menus and Headers ###
+#########################
+
+def mainHeader():
+    print(dedent(f"""\
+        {"=" * 50}
+        Projeto Final Python
+        Pycket Tracer - Ferramenta de Apoio a Networking
+        Diogo Fontes | Luís Oliveira
+        {"=" * 50}
+        1. Login
+        2. Registar Novo Utilizador
+        """))
+    while True:
+        try:
+            main_option = input("Selecione a opção desejada (Clique enter para sair): ")
+            if main_option == "":
+                exit()
+            elif int(main_option) == 1:
+                login()
+            elif int(main_option) == 2:
+                signin()
+            else:
+                print("Insira apenas opções entre 1 e 2")
+        except ValueError:
+            print("Insira apenas opções entre 1 e 2")
+
+def menu():
+        global option
+        print(dedent(f"""
+            {"=" * 50}
+            Pycket Tracer Tools
+            {"=" * 50}"""))
+        if database[current_user]['role'] == 'admin': 
+            print(*tools,sep="\n")
+        else:
+            print(*tools[:-1],sep="\n")
+        while True:
+            try:
+                option = input("\nSelecione a ferramenta desejada (Clique enter para sair): ")
+                if option == "":
+                    exit()
+                if database[current_user]['role'] == 'admin':
+                    if int(option) >= 1 and int(option) <= 7:
+                        tool(int(option))
+                    else:
+                        print("Insira apenas opções entre 1 e 7")
+                else:
+                    if int(option) >= 1 and int(option) <= 6:
+                        tool(int(option))
+                    else:
+                        print("Insira apenas opções entre 1 e 6")
+            except ValueError:
+                print("Insira apenas opções mostradas")
+
+def submenu():
+    print(dedent(f"""\
+        1. Voltar ao menu inicial
+        0. Sair     
+        """))
+    while True:
+        try:
+            subOption = input("Selecione a opção desejada (Clique enter para continuar na ferramenta atual): ")
+            if subOption == "":
+                print()
+                tool(int(option))
+            elif int(subOption) == 1:
+                print()
+                menu()
+            elif int(subOption) == 0:
+                exit()
+            else:
+                print("Insira apenas opções entre 0 e 1")
+        except ValueError:
+            print("Insira apenas opções entre 0 e 1")
+
 def administration():
     print(dedent(f"""
         {"=" * 50}
@@ -63,6 +141,75 @@ def administration():
                 print("Insira apenas opções entre 1 e 4")
         except ValueError:
             print("Insira apenas opções entre 1 e 4")
+
+def resultHeader():
+    print(dedent(f"""
+        {"=" * 50}
+        *** Resultado ***"""))
+
+def toolHeader():
+    toolTitle = tools[int(option)-1]
+    print(dedent(f"""
+        {"=" * 50}
+        Pycket Tracer Tools
+        {toolTitle[3:]}
+        {"=" * 50}
+        """))
+
+
+######################
+### Main Functions ###
+######################
+
+def login():
+    global username_input
+    print(dedent(f"""
+        {"=" * 50}
+        Login
+        {"=" * 50}"""))
+    while True:
+        username_input = input("Utilizador: ")
+        if username_input == "":
+           mainHeader()
+        elif username_input in database:
+            break
+        else:
+            print("Utilizador não encontrado")
+    password_check()
+    print(f"\nBem vindo, {username_input.capitalize()}!")
+    global current_user
+    current_user = username_input
+    menu()
+
+def signin():
+    print(dedent(f"""
+        {"=" * 50}
+        Registar Novo Utilizador
+        {"=" * 50}"""))
+    while True:           
+        username_input = input("Utilizador: ")
+        if username_input == "" or len(username_input) < 3:
+            print("Insira pelo menos 3 caracteres")
+        else:
+            break
+    if username_input not in database:
+        password_get()
+        database[username_input] = {
+            'password': hashed_password,
+            'role':'user'
+            }
+        print(f"\nLogin para o utilizador '{username_input}' criado com sucesso!")
+        if current_user is None:
+            login()
+        else:
+            administration()
+    else:
+        print(f"O utilizador {username_input} já existe")
+        input("\nClique enter para voltar ao menu anterior")
+        if current_user is None:
+            mainHeader()
+        else:
+            administration()
 
 def removeUser():
     print(dedent(f"""
@@ -127,7 +274,6 @@ def changePassword():
     print(f"\nA sua password foi atualizada com sucesso!")
     menu()
         
-
 def changeRole():
     print(dedent(f"""
         {"=" * 50}
@@ -232,108 +378,6 @@ def password_check():
                     except ValueError:
                         print("Atingiu o número máximo de tentativas")
 
-def login():
-    global username_input
-    print(dedent(f"""
-        {"=" * 50}
-        Login
-        {"=" * 50}"""))
-    while True:
-        username_input = input("Utilizador: ")
-        if username_input == "":
-           mainHeader()
-        elif username_input in database:
-            break
-        else:
-            print("Utilizador não encontrado")
-    password_check()
-    print(f"\nBem vindo, {username_input.capitalize()}!")
-    global current_user
-    current_user = username_input
-    menu()
-
-def signin():
-    print(dedent(f"""
-        {"=" * 50}
-        Registar Novo Utilizador
-        {"=" * 50}"""))
-    while True:           
-        username_input = input("Utilizador: ")
-        if username_input == "" or len(username_input) < 3:
-            print("Insira pelo menos 3 caracteres")
-        else:
-            break
-    if username_input not in database:
-        password_get()
-        database[username_input] = {
-            'password': hashed_password,
-            'role':'user'
-            }
-        print(f"\nLogin para o utilizador '{username_input}' criado com sucesso!")
-        if current_user is None:
-            login()
-        else:
-            administration()
-    else:
-        print(f"O utilizador {username_input} já existe")
-        input("\nClique enter para voltar ao menu anterior")
-        if current_user is None:
-            mainHeader()
-        else:
-            administration()
-        
-
-def defaultDecimalIP():
-    randIP = []
-    for x in range(4):
-        randIP.append(str(random.randrange(0,256)))
-    return ".".join(randIP)
-
-def defaultBinaryIP():
-    randIP = []
-    for x in range(32):
-        randIP.append(str(random.randrange(0,2)))
-    randIP = "".join(randIP)
-    return f"{randIP[0:9]}.{randIP[9:17]}.{randIP[17:25]}.{randIP[25:33]}"
-
-def mainHeader():
-    print(dedent(f"""\
-        {"=" * 50}
-        Projeto Final Python
-        Pycket Tracer - Ferramenta de Apoio a Networking
-        Diogo Fontes | Luís Oliveira
-        {"=" * 50}
-        1. Login
-        2. Registar Novo Utilizador
-        """))
-    while True:
-        try:
-            main_option = input("Selecione a opção desejada (Clique enter para sair): ")
-            if main_option == "":
-                exit()
-            elif int(main_option) == 1:
-                login()
-            elif int(main_option) == 2:
-                signin()
-            else:
-                print("Insira apenas opções entre 1 e 2")
-        except ValueError:
-            print("Insira apenas opções entre 1 e 2")
-
-def resultHeader():
-    print(dedent(f"""
-        {"=" * 50}
-        *** Resultado ***"""))
-
-def toolHeader():
-    toolTitle = tools[int(option)-1]
-    print(dedent(f"""
-        {"=" * 50}
-        Pycket Tracer Tools
-        {toolTitle[3:]}
-        {"=" * 50}
-        """))
-
 def tool(option):
     if option == 1:
         toolHeader()
@@ -415,54 +459,21 @@ def tool(option):
     elif option == 7:
         administration()
 
-def menu():
-        global option
-        print(dedent(f"""
-            {"=" * 50}
-            Pycket Tracer Tools
-            {"=" * 50}"""))
-        if database[current_user]['role'] == 'admin': 
-            print(*tools,sep="\n")
-        else:
-            print(*tools[:-1],sep="\n")
-        while True:
-            try:
-                option = input("\nSelecione a ferramenta desejada (Clique enter para sair): ")
-                if option == "":
-                    exit()
-                if database[current_user]['role'] == 'admin':
-                    if int(option) >= 1 and int(option) <= 7:
-                        tool(int(option))
-                    else:
-                        print("Insira apenas opções entre 1 e 7")
-                else:
-                    if int(option) >= 1 and int(option) <= 6:
-                        tool(int(option))
-                    else:
-                        print("Insira apenas opções entre 1 e 6")
-            except ValueError:
-                print("Insira apenas opções mostradas")
+#######################
+### Other Functions ###
+#######################
 
-def submenu():
-    print(dedent(f"""\
-        1. Voltar ao menu inicial
-        0. Sair     
-        """))
-    while True:
-        try:
-            subOption = input("Selecione a opção desejada (Clique enter para continuar na ferramenta atual): ")
-            if subOption == "":
-                print()
-                tool(int(option))
-            elif int(subOption) == 1:
-                print()
-                menu()
-            elif int(subOption) == 0:
-                exit()
-            else:
-                print("Insira apenas opções entre 0 e 1")
-        except ValueError:
-            print("Insira apenas opções entre 0 e 1")
+def defaultDecimalIP():
+    randIP = []
+    for x in range(4):
+        randIP.append(str(random.randrange(0,256)))
+    return ".".join(randIP)
+
+def defaultBinaryIP():
+    randIP = []
+    for x in range(32):
+        randIP.append(str(random.randrange(0,2)))
+    randIP = "".join(randIP)
+    return f"{randIP[0:9]}.{randIP[9:17]}.{randIP[17:25]}.{randIP[25:33]}"
 
 mainHeader()
-menu()
