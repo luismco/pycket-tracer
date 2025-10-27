@@ -205,7 +205,8 @@ def signin():
             administration()
     else:
         print(f"O utilizador {username_input} já existe")
-        input("\nClique enter para voltar ao menu anterior")
+        print("\nClique enter para voltar ao menu anterior")
+        input()
         if current_user is None:
             mainHeader()
         else:
@@ -216,7 +217,6 @@ def removeUser():
         {"=" * 50}
         Remover Utilizador
         {"=" * 50}"""))
-    print(current_user)
     while True:
         username_input = input("Utilizador a remover: ")
         if username_input == "":
@@ -230,7 +230,8 @@ def removeUser():
                     Tem a certeza que quer eliminar o utlizador {username_input}?
                     1. Sim
                     2. Não
-                    """))
+
+                    Selecione a opção desejada: """))
                     if int(remove_confirm) == 1:
                         database.pop(username_input)
                         administration()
