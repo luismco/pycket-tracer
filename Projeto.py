@@ -56,7 +56,7 @@ def administration():
                 input("\nClique enter para voltar ao menu anterior")
                 administration()
             elif int(main_option) == 4:
-                changePassword()
+                changePasswordAdmin()
             elif int(main_option) == 5:
                 changeRole()
             else:
@@ -94,72 +94,84 @@ def removeUser():
                 
         else:
             print("Utilizador não encontrado")
-def changePassword():
-    
-def changeRole():
-    return True
 
-def login():
+def changePasswordAdmin():
     print(dedent(f"""
         {"=" * 50}
-        Login
+        Alteração de Password
         {"=" * 50}"""))
     while True:
-        username_input = input("Utilizador: ")
+        username_input = input("Alterar password para o utilizador: ")
         if username_input == "":
-           exit()
+            administration()
         elif username_input in database:
             break
         else:
             print("Utilizador não encontrado")
+    print("*** Nova Password ***")
+    password_get()
+    database[username_input]['password'] = hashed_password
+    print(f"\nA password do utilizador '{username_input}' foi atualizada com sucesso!")
+    administration()
 
-    max_attempts = 3
-    attempts = 0
-
-    while attempts < max_attempts:
-        password_input = getpass.getpass().encode()
-        sha256 = hashlib.sha256()
-        sha256.update(password_input)
-        hashed_input_password = sha256.hexdigest()
-        if database[username_input]['password'] == hashed_input_password:
-            print(f"\nBem vindo, {username_input.capitalize()}!")
-            global current_user
-            current_user = username_input
-            menu()
-        else:
-            attempts += 1
-            if attempts < max_attempts:
-                print(dedent(f"""
-                    {"=" * 50}
-                    Password incorreta
-                    Tentativas restantes: {max_attempts - attempts}
-                    {"=" * 50}
-                    """))
-            else:
-                print("Atingiu o número máximo de tentativas")
-                while True:
-                    try:
-                        exit_input = input("Clique enter para sair")
-                        if exit_input == "":
-                            exit()
-                        else:
-                            print("Atingiu o número máximo de tentativas")
-                    except ValueError:
-                        print("Atingiu o número máximo de tentativas")
-
-def signin():
+def changePassword():
     print(dedent(f"""
         {"=" * 50}
-        Registar Novo Utilizador
+        Alteração de Password
         {"=" * 50}"""))
-    while True:           
-        username_input = input("Utilizador: ")
-        if username_input == "" or len(username_input) < 3:
-            print("Insira pelo menos 3 caracteres")
-        else:
+    print("*** Password Atual ***")
+    password_check()
+    print("*** Nova Password ***")
+    password_get()
+    database[current_user]['password'] = hashed_password
+    print(f"\nA sua password foi atualizada com sucesso!")
+    menu()
+        
+
+def changeRole():
+    print(dedent(f"""
+        {"=" * 50}
+        Alteração de Permissões
+        {"=" * 50}"""))
+    while True:
+        username_input = input("Alterar permissões para o utilizador: ")
+        if username_input == "":
+            administration()
+        elif username_input in database:
             break
-    if username_input not in database:
-        while True:
+        else:
+            print("Utilizador não encontrado")
+    current_role = database[username_input]['role']
+    if current_role == 'admin':
+        new_role = 'user'
+    else:
+        new_role = 'admin'
+    print(dedent(f"""
+        *** Permissões Atuais ***
+        Utilizador: {username_input}
+        Permissões: {current_role}\n
+        1. Alterar permissões ({current_role} para {new_role})
+        2. Manter permissões ({current_role})
+        """))
+    while True:
+        try:
+            role_option = input("Selecione a opção desejada: ")
+            if int(role_option) == 1:
+                database[username_input]['role'] = new_role
+                print(f"\nAs permissões do utilizador '{username_input}' foram alteradas com sucesso!")
+                break
+            elif int(role_option) == 2:
+                print(f"As permissões do utilizador '{username_input}' foram mantidas!")
+                break
+            else:
+                print("Insira apenas opções entre 1 e 2")
+        except ValueError:
+            print("Insira apenas opções entre 1 e 2")
+    administration()
+
+def password_get():
+    global hashed_password
+    while True:
             password = getpass.getpass()
             if len(password) < 8:
                 print("A password tem que ter um mínimo de 8 caracteres")
@@ -181,18 +193,83 @@ def signin():
                     break
                 else:
                     print(dedent(f"""
-                        *** Requisitos para a password ***
+                        *** Requisitos de Password ***
                         A password deve conter letras minúsculas, maiúsculas, números e caracteres especias ({special})
                         """))
-        password = password.encode()
+    password = password.encode()
+    sha256 = hashlib.sha256()
+    sha256.update(password)
+    hashed_password = sha256.hexdigest()
+
+def password_check():
+    max_attempts = 3
+    attempts = 0
+    while attempts < max_attempts:
+        password_input = getpass.getpass().encode()
         sha256 = hashlib.sha256()
-        sha256.update(password)
-        hashed_password = sha256.hexdigest()
+        sha256.update(password_input)
+        hashed_input_password = sha256.hexdigest()
+        if database[username_input]['password'] == hashed_input_password:
+            break
+        else:
+            attempts += 1
+            if attempts < max_attempts:
+                print(dedent(f"""
+                    {"=" * 50}
+                    Password incorreta
+                    Tentativas restantes: {max_attempts - attempts}
+                    {"=" * 50}
+                    """))
+            else:
+                print("Atingiu o número máximo de tentativas")
+                while True:
+                    try:
+                        exit_input = input("Clique enter para sair")
+                        if exit_input == "":
+                            exit()
+                        else:
+                            print("Atingiu o número máximo de tentativas")
+                    except ValueError:
+                        print("Atingiu o número máximo de tentativas")
+
+def login():
+    global username_input
+    print(dedent(f"""
+        {"=" * 50}
+        Login
+        {"=" * 50}"""))
+    while True:
+        username_input = input("Utilizador: ")
+        if username_input == "":
+           mainHeader()
+        elif username_input in database:
+            break
+        else:
+            print("Utilizador não encontrado")
+    password_check()
+    print(f"\nBem vindo, {username_input.capitalize()}!")
+    global current_user
+    current_user = username_input
+    menu()
+
+def signin():
+    print(dedent(f"""
+        {"=" * 50}
+        Registar Novo Utilizador
+        {"=" * 50}"""))
+    while True:           
+        username_input = input("Utilizador: ")
+        if username_input == "" or len(username_input) < 3:
+            print("Insira pelo menos 3 caracteres")
+        else:
+            break
+    if username_input not in database:
+        password_get()
         database[username_input] = {
             'password': hashed_password,
             'role':'user'
             }
-        print(f"\nLogin para o utilizador {username_input} criado com sucesso!")
+        print(f"\nLogin para o utilizador '{username_input}' criado com sucesso!")
         if current_user is None:
             login()
         else:
@@ -332,7 +409,7 @@ def tool(option):
             except ValueError:
                 print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
     elif option == 5:
-        mainHeader()
+        changePassword()
     elif option == 6:
         mainHeader()
     elif option == 7:
