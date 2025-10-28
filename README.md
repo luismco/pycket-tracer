@@ -7,7 +7,9 @@
   <br>
 </h1>
 
-<h4 align="center">Python Course Final Project (25H)</h4>
+<h4 align="center">Python Module (25H) • Final Project</h4>
+<br><br>
+
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
