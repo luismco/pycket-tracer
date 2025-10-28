@@ -16,14 +16,15 @@ database = {
     'ruben': {'password': 'c1cc69e61c0f1c7ade8df0f2994e582e7c1f2c57d1ec192a0baf9f96b7739d9d', 'role': 'user'}
     }
 
-tools = ["1. Conversão de IP (Decimal para Binário)", 
-         "2. Conversão de IP (Binário para Decimal)", 
-         "3. Cálculo da Máscara de Rede/CIDR", 
-         "4. Classicação de IPs (Privado vs Público)",
-         "5. Alterar Password",
-         "6. Terminar sessão",
-         "7. Administração de Utilizadores"
-        ]
+tools = [
+    "1. Conversão de IP (Decimal para Binário)", 
+    "2. Conversão de IP (Binário para Decimal)", 
+    "3. Cálculo da Máscara de Rede/CIDR", 
+    "4. Classicação de IPs (Privado vs Público)",
+    "5. Alterar Password",
+    "6. Terminar sessão",
+    "7. Administração de Utilizadores"
+]
 
 current_user = None
 
@@ -39,7 +40,7 @@ def mainHeader():
         Diogo Fontes | Luís Oliveira
         {"=" * 50}
         1. Login
-        2. Registar Novo Utilizador
+        2. Registar Utilizador
         """))
     while True:
         try:
@@ -104,12 +105,13 @@ def submenu():
             print("Insira apenas opções entre 0 e 1")
 
 def administration():
+    global admin_option
     print("\033c", end="")
     print(dedent(f"""
         {"=" * 50}
         Administração de Utilizadores
         {"=" * 50}
-        1. Adicionar Utilizador
+        1. Registar Utilizador
         2. Remover Utilizador
         3. Listar Utilizadores
         4. Alterar Passwords
@@ -117,14 +119,14 @@ def administration():
         """))
     while True:
         try:
-            main_option = input("Selecione a opção desejada (Clique enter para voltar ao menu principal): ")
-            if main_option == "":
+            admin_option = input("Selecione a opção desejada (Clique enter para voltar ao menu principal): ")
+            if admin_option == "":
                 menu()
-            elif int(main_option) == 1:
+            elif int(admin_option) == 1:
                 signin()
-            elif int(main_option) == 2:
+            elif int(admin_option) == 2:
                 removeUser()
-            elif int(main_option) == 3:
+            elif int(admin_option) == 3:
                 print("\033c", end="")
                 print(dedent(f"""
                     {"=" * 50}
@@ -133,9 +135,9 @@ def administration():
                     {list(database.keys())}"""))
                 input("\nClique enter para voltar ao menu anterior")
                 administration()
-            elif int(main_option) == 4:
+            elif int(admin_option) == 4:
                 changePasswordAdmin()
-            elif int(main_option) == 5:
+            elif int(admin_option) == 5:
                 changeRole()
             else:
                 print("Insira apenas opções entre 1 e 4")
@@ -188,7 +190,12 @@ def signin():
         {"=" * 50}"""))
     while True:          
         username_input = input("Utilizador: ")
-        if len(username_input) < 3:
+        if username_input == "":
+            if current_user is None:
+                mainHeader()
+            else:
+                administration()
+        elif len(username_input) < 3:
             print("Insira pelo menos 3 caracteres")
         else:
             break
@@ -221,7 +228,7 @@ def removeUser():
     while True:
         username_input = input("Utilizador a remover: ")
         if username_input == "":
-           exit()
+           administration()
         elif username_input == current_user:
             print("Não pode eliminar o utilizador atual")
         elif username_input in database:
@@ -478,7 +485,6 @@ def tool(option):
 #######################
 ### Other Functions ###
 #######################
-
 def defaultDecimalIP():
     randIP = []
     for x in range(4):
