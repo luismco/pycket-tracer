@@ -44,13 +44,13 @@ To clone and run this application, you'll just need [Python](https://www.python.
 <b>Example for Linux</b>
 ```bash
 # Clone this repository
-$ git clone https://github.com/luismco/pycket-tracer
+git clone https://github.com/luismco/pycket-tracer
 
 # Go into the repository
-$ cd pycket-tracer
+cd pycket-tracer
 
 # Run the app
-$ python3 ./pycket-tracer.py
+python3 ./pycket-tracer.py
 ```
 
 ## Modules
