@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <img src="https://raw.githubusercontent.com/luismco/pycket-tracer/refs/heads/main/images/pycket-tracer.svg" alt="Pycket Tracer" width="200">
+  <img src="https://raw.githubusercontent.com/luismco/pycket-tracer/refs/heads/main/images/logo.svg" alt="Pycket Tracer" width="200">
   <br>
   Pycket Tracer
   <br>
