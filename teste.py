@@ -11,17 +11,21 @@ database = {
     'ruben': {'password': 'c1cc69e61c0f1c7ade8df0f2994e582e7c1f2c57d1ec192a0baf9f96b7739d9d', 'role': 'user'}
     }
 
-current_user = None
+tools = ["1. Conversão de IP (Decimal para Binário)", 
+         "2. Conversão de IP (Binário para Decimal)", 
+         "3. Cálculo da Máscara de Rede/CIDR", 
+         "4. Classicação de IPs (Privado vs Público)",
+         "5. Alterar Password",
+         "6. Terminar sessão",
+         "7. Administração de Utilizadores"
+        ]
 
-letters = string.ascii_letters
-numbers = list(range(10))
-
-print(letters)
-print(numbers)
-
-password = "Test123!"
-print(f"Type of password: {type(password)}")
-
-for char in password:
-    print(f"Type of char: {type(char)}, value: {char}")
+print("\033c", end="") #faz clear ao terminal
+print(dedent(f"""
+    {"=" * 50}
+    Pycket Tracer Tools
+    {"=" * 50}""")) #faz o print do cabeçalho
+print(*tools,sep="\n") #imprime os elementos da lista tools
+print(list(database.keys()))
+print(database.keys())
 

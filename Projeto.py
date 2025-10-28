@@ -27,11 +27,9 @@ tools = ["1. Conversão de IP (Decimal para Binário)",
 
 current_user = None
 
-
 #########################
 ### Menus and Headers ###
 #########################
-
 def mainHeader():
     print("\033c", end="")
     print(dedent(f"""\
@@ -64,7 +62,7 @@ def menu():
             {"=" * 50}
             Pycket Tracer Tools
             {"=" * 50}"""))
-        if database[current_user]['role'] == 'admin': 
+        if database[current_user]['role'] == 'admin':
             print(*tools,sep="\n")
         else:
             print(*tools[:-1],sep="\n")
@@ -88,19 +86,17 @@ def menu():
 
 def submenu():
     print(dedent(f"""\
-        1. Voltar ao menu inicial
+        1. Voltar ao menu principal
         0. Sair     
         """))
     while True:
         try:
-            subOption = input("Selecione a opção desejada (Clique enter para continuar na ferramenta atual): ")
-            if subOption == "":
-                print()
+            sub_option = input("Selecione a opção desejada (Clique enter para continuar na ferramenta atual): ")
+            if sub_option == "":
                 tool(int(option))
-            elif int(subOption) == 1:
-                print()
+            elif int(sub_option) == 1:
                 menu()
-            elif int(subOption) == 0:
+            elif int(sub_option) == 0:
                 exit()
             else:
                 print("Insira apenas opções entre 0 e 1")
@@ -160,11 +156,9 @@ def toolHeader():
         {"=" * 50}
         """))
 
-
 ######################
 ### Main Functions ###
 ######################
-
 def login():
     print("\033c", end="")
     global username_input
@@ -192,9 +186,9 @@ def signin():
         {"=" * 50}
         Registar Novo Utilizador
         {"=" * 50}"""))
-    while True:           
+    while True:          
         username_input = input("Utilizador: ")
-        if username_input == "" or len(username_input) < 3:
+        if len(username_input) < 3:
             print("Insira pelo menos 3 caracteres")
         else:
             break
@@ -244,11 +238,12 @@ def removeUser():
                         print(f"\nUtilizador '{username_input}' removido com sucesso!")
                         input("\nClique enter para voltar ao menu anterior")
                         administration()
-                    else:
+                    elif int(remove_confirm) == 2:
                         administration()
+                    else:
+                        print("Insira apenas opções entre 1 e 2")
                 except ValueError:
-                    print("Insira apenas opções entre 1 e 2")
-                
+                    print("Insira apenas opções entre 1 e 2")             
         else:
             print("Utilizador não encontrado")
 
@@ -287,7 +282,7 @@ def changePassword():
     print(f"\nA sua password foi atualizada com sucesso!")
     input("\nClique enter para voltar ao menu anterior")
     menu()
-        
+
 def changeRole():
     print("\033c", end="")
     print(dedent(f"""
@@ -299,7 +294,10 @@ def changeRole():
         if username_input == "":
             administration()
         elif username_input in database:
-            break
+            if username_input == current_user:
+                print("Não pode alterar as permissões do utilizador atual")
+            else:
+                break
         else:
             print("Utilizador não encontrado")
     current_role = database[username_input]['role']
