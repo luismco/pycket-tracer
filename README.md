@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <img src="https://raw.githubusercontent.com/luismco/pycket-tracer/refs/heads/main/images/pycket-tracer.svg?token=GHSAT0AAAAAADOC2CRUT5XSI3AJBYMZ42H22IBAMCA" alt="Pycket Tracer" width="200">
+  <img src="https://raw.githubusercontent.com/luismco/pycket-tracer/refs/heads/main/images/pycket-tracer.svg" alt="Pycket Tracer" width="200">
   <br>
   Pycket Tracer
   <br>
@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/luismco/pycket-tracer/refs/heads/main/images/screenshot.png?token=GHSAT0AAAAAADOC2CRVZU6TBV7WT3XWEF622IBAR3Q" alt="screenshot">
+<img src="https://raw.githubusercontent.com/luismco/pycket-tracer/refs/heads/main/images/screenshot.png" alt="screenshot">
 <p/>
 
 ## Key Features
