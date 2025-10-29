@@ -133,7 +133,8 @@ def administration():
                     Lista de Utilizadores
                     {"=" * 50}
                     {list(database.keys())}"""))
-                input("\nClique enter para voltar ao menu anterior")
+                print(f"\nClique enter para voltar ao menu anterior")
+                getpass.getpass(prompt="")
                 administration()
             elif int(admin_option) == 4:
                 changePasswordAdmin()
@@ -206,14 +207,16 @@ def signin():
             'role':'user'
             }
         print(f"\nLogin para o utilizador '{username_input}' criado com sucesso!")
-        input("\nClique enter para voltar ao menu anterior")
+        print("\nClique enter para voltar ao menu anterior")
+        getpass.getpass(prompt="")
         if current_user is None:
             login()
         else:
             administration()
     else:
         print(f"O utilizador {username_input} já existe")
-        input("\nClique enter para voltar ao menu anterior")
+        print("\nClique enter para voltar ao menu anterior")
+        getpass.getpass(prompt="")
         if current_user is None:
             mainHeader()
         else:
@@ -243,7 +246,8 @@ def removeUser():
                     if int(remove_confirm) == 1:
                         database.pop(username_input)
                         print(f"\nUtilizador '{username_input}' removido com sucesso!")
-                        input("\nClique enter para voltar ao menu anterior")
+                        print("\nClique enter para voltar ao menu anterior")
+                        getpass.getpass(prompt="")
                         administration()
                     elif int(remove_confirm) == 2:
                         administration()
@@ -272,7 +276,8 @@ def changePasswordAdmin():
     password_get()
     database[username_input]['password'] = hashed_password
     print(f"\nA password do utilizador '{username_input}' foi atualizada com sucesso!")
-    input("\nClique enter para voltar ao menu anterior")
+    print("\nClique enter para voltar ao menu anterior")
+    getpass.getpass(prompt="")
     administration()
 
 def changePassword():
@@ -287,7 +292,8 @@ def changePassword():
     password_get()
     database[current_user]['password'] = hashed_password
     print(f"\nA sua password foi atualizada com sucesso!")
-    input("\nClique enter para voltar ao menu anterior")
+    print("\nClique enter para voltar ao menu anterior")
+    getpass.getpass(prompt="")
     menu()
 
 def changeRole():
@@ -325,11 +331,13 @@ def changeRole():
             if int(role_option) == 1:
                 database[username_input]['role'] = new_role
                 print(f"\nAs permissões do utilizador '{username_input}' foram alteradas com sucesso!")
-                input("\nClique enter para voltar ao menu anterior")
+                print("\nClique enter para voltar ao menu anterior")
+                getpass.getpass(prompt="")
                 break
             elif int(role_option) == 2:
                 print(f"As permissões do utilizador '{username_input}' foram mantidas!")
-                input("\nClique enter para voltar ao menu anterior")
+                print("\nClique enter para voltar ao menu anterior")
+                getpass.getpass(prompt="")
                 break
             else:
                 print("Insira apenas opções entre 1 e 2")
@@ -390,12 +398,9 @@ def password_check():
                     """))
             else:
                 print("Atingiu o número máximo de tentativas")
-                while True:
-                    try:
-                        input("Clique enter para sair")
-                        exit()
-                    except ValueError:
-                        print("Atingiu o número máximo de tentativas")
+                print("Clique enter para sair")
+                getpass.getpass(prompt="")
+                exit()
 
 def tool(option):
     print("\033c", end="")
@@ -404,36 +409,51 @@ def tool(option):
         while True:
             try:
                 decimalIP = input("Insira um endereço de IPv4 em formato decimal: ")
-                ip = ('{:b}'.format(ipaddress.IPv4Address(decimalIP)))
-                resultHeader()
-                print(f"IP em formato binário: {ip[0:9]}.{ip[9:17]}.{ip[17:25]}.{ip[25:33]}")
-                print("=" * 50, "\n")
-                submenu()
+                if decimalIP == "":
+                    print()
+                    break
+                else:
+                    ip = ('{:b}'.format(ipaddress.IPv4Address(decimalIP)))
+                    resultHeader()
+                    print(f"IP em formato binário: {ip[0:9]}.{ip[9:17]}.{ip[17:25]}.{ip[25:33]}")
+                    print("=" * 50, "\n")
+                    break
             except ValueError:
                 print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
+        submenu()
     elif option == 2:
         toolHeader()
         while True:
             try:
                 binaryIP = input("Insira um endereço de IPv4 em formato binário: ")
-                binaryIP = binaryIP.replace(".", "")
-                if len(binaryIP) == 32:
-                    binaryIP = int(binaryIP, 2)
-                    ip = ipaddress.IPv4Address(binaryIP)
-                    resultHeader()
-                    print(f"IP em formato decimal: {ip}")
-                    print("=" * 50, "\n")
-                    submenu()
+                if binaryIP == "":
+                    print()
+                    break
                 else:
-                    print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
+                    binaryIP = binaryIP.replace(".", "")
+                    if len(binaryIP) == 32:
+                        binaryIP = int(binaryIP, 2)
+                        ip = ipaddress.IPv4Address(binaryIP)
+                        resultHeader()
+                        print(f"IP em formato decimal: {ip}")
+                        print("=" * 50, "\n")
+                        break
+                    else:
+                        print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
             except ValueError:
                 print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
+        submenu()
     elif option == 3:
         toolHeader()
         while True:
             try:
-                hosts = int(input("Insira o número de dispositivos necessários: "))
-                break
+                hosts = input("Insira o número de dispositivos necessários: ")
+                if hosts == "":
+                    print()
+                    submenu()
+                else:
+                    hosts = int(hosts)
+                    break
             except ValueError:
                 print("Insira apenas números inteiros")
         totalHosts = hosts + 2
@@ -456,26 +476,32 @@ def tool(option):
                 Último IP Disponível: {ipaddress.IPv4Network(network)[-2]}
                 IP de Broadcast: {network.broadcast_address}"""))
                 print("=" * 50, "\n")
-                submenu()
+                break
             except (ValueError, UnboundLocalError):
                 print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
+        submenu()
     elif option == 4:
         toolHeader()
         while True:
             try:
                 ip = input("Insira um endereço de IPv4: ")
-                if ipaddress.IPv4Address(ip).is_private is True:
-                    resultHeader()
-                    print(f"O IP '{ip}' é um IP Privado")
-                    print("=" * 50, "\n")
-                    submenu()
+                if ip == "":
+                    print()
+                    break
                 else:
-                    resultHeader()
-                    print(f"O IP '{ip}' é um IP Público")
-                    print("=" * 50, "\n")
-                    submenu()
+                    if ipaddress.IPv4Address(ip).is_private is True:
+                        resultHeader()
+                        print(f"O IP '{ip}' é um IP Privado")
+                        print("=" * 50, "\n")
+                        break
+                    else:
+                        resultHeader()
+                        print(f"O IP '{ip}' é um IP Público")
+                        print("=" * 50, "\n")
+                        break
             except ValueError:
                 print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
+        submenu()
     elif option == 5:
         changePassword()
     elif option == 6:
