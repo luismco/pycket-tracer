@@ -14,7 +14,7 @@ database = {
     'luis': {'password': '20f15cfb78a1c83af3bd7976a78952ea1b1ed435a706bb04ba2c83c7fd0a4965', 'role': 'admin'}, 
     'diogo': {'password': '9ca6a0e5e922e01e20f11d999ecc1685e969c9acc2abc83006281c131fe22a15', 'role': 'admin'},
     'ruben': {'password': 'c1cc69e61c0f1c7ade8df0f2994e582e7c1f2c57d1ec192a0baf9f96b7739d9d', 'role': 'user'}
-    }
+}
 
 tools = [
     "1. Conversão de IP (Decimal para Binário)", 
@@ -420,12 +420,15 @@ def tool(option):
             try:
                 binaryIP = input("Insira um endereço de IPv4 em formato binário: ")
                 binaryIP = binaryIP.replace(".", "")
-                binaryIP = int(binaryIP, 2)
-                ip = ipaddress.IPv4Address(binaryIP)
-                resultHeader()
-                print(f"IP em formato decimal: {ip}")
-                print("=" * 50, "\n")
-                submenu()
+                if len(binaryIP) == 32:
+                    binaryIP = int(binaryIP, 2)
+                    ip = ipaddress.IPv4Address(binaryIP)
+                    resultHeader()
+                    print(f"IP em formato decimal: {ip}")
+                    print("=" * 50, "\n")
+                    submenu()
+                else:
+                    print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
             except ValueError:
                 print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
     elif option == 3:
@@ -433,31 +436,32 @@ def tool(option):
         while True:
             try:
                 hosts = int(input("Insira o número de dispositivos necessários: "))
+                break
             except ValueError:
                 print("Insira apenas números inteiros")
-            totalHosts = hosts + 2
-            bits = 0
-            while (2 ** bits) < totalHosts:
-                bits += 1
-            cidr = 32 - bits
-            while True:
-                try:
-                    decimalIP = input("Insira o IPv4 da rede: ")
-                    ip = ipaddress.IPv4Address(decimalIP)
-                    network = ipaddress.ip_network(f"{ip}/{cidr}")
-                    resultHeader()
-                    print(dedent(f"""\
-                    Máscara de Rede Adequeada: {network.netmask}
-                    CIDR adequado: /{cidr}
-                    Número de IPs disponíveis: {network.num_addresses - 2}
-                    IP da rede: {network.network_address}
-                    Primero IP Disponível: {ipaddress.IPv4Network(network)[1]}
-                    Último IP Disponível: {ipaddress.IPv4Network(network)[-2]}
-                    IP de Broadcast: {network.broadcast_address}"""))
-                    print("=" * 50, "\n")
-                    submenu()
-                except (ValueError, UnboundLocalError):
-                    print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
+        totalHosts = hosts + 2
+        bits = 0
+        while (2 ** bits) < totalHosts:
+            bits += 1
+        cidr = 32 - bits
+        while True:
+            try:
+                decimalIP = input("Insira o IPv4 da rede: ")
+                ip = ipaddress.IPv4Address(decimalIP)
+                network = ipaddress.ip_network(f"{ip}/{cidr}")
+                resultHeader()
+                print(dedent(f"""\
+                Máscara de Rede Adequeada: {network.netmask}
+                CIDR adequado: /{cidr}
+                Número de IPs disponíveis: {network.num_addresses - 2}
+                IP da rede: {network.network_address}
+                Primero IP Disponível: {ipaddress.IPv4Network(network)[1]}
+                Último IP Disponível: {ipaddress.IPv4Network(network)[-2]}
+                IP de Broadcast: {network.broadcast_address}"""))
+                print("=" * 50, "\n")
+                submenu()
+            except (ValueError, UnboundLocalError):
+                print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
     elif option == 4:
         toolHeader()
         while True:
@@ -478,6 +482,8 @@ def tool(option):
     elif option == 5:
         changePassword()
     elif option == 6:
+        global current_user
+        current_user = None
         mainHeader()
     elif option == 7:
         administration()

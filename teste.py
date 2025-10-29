@@ -20,12 +20,9 @@ tools = ["1. Conversão de IP (Decimal para Binário)",
          "7. Administração de Utilizadores"
         ]
 
-print("\033c", end="") #faz clear ao terminal
-print(dedent(f"""
-    {"=" * 50}
-    Pycket Tracer Tools
-    {"=" * 50}""")) #faz o print do cabeçalho
-print(*tools,sep="\n") #imprime os elementos da lista tools
-print(list(database.keys()))
-print(database.keys())
+while True:
+    hosts = input("Insira o número de dispositivos necessários: ")
+    if hosts is not int:
+          print("Insira apenas números inteiros")
+    break
 
