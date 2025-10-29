@@ -392,11 +392,8 @@ def password_check():
                 print("Atingiu o número máximo de tentativas")
                 while True:
                     try:
-                        exit_input = input("Clique enter para sair")
-                        if exit_input == "":
-                            exit()
-                        else:
-                            print("Atingiu o número máximo de tentativas")
+                        input("Clique enter para sair")
+                        exit()
                     except ValueError:
                         print("Atingiu o número máximo de tentativas")
 
