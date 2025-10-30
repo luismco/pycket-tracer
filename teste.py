@@ -14,20 +14,20 @@ def vlsm():
         {"=" * 50}"""))
     while True:
         try:
-            n_networks = int(input("Number of Networks to Configure: "))
+            n_networks = int(input("Número de redes a configurar: "))
             if n_networks < 1:
-                print("Only positive integers allowed")
+                print("Insira apenas números intereiros positivos")
             else:
                 break
         except ValueError:
-            print("Only positive integers allowed")
+            print("Insira apenas números intereiros positivos")
     networks = {}
     for netw in range(n_networks):
         while True:
             try:
-                network_input = int(input(f"Enter the number of hosts for Network {netw+1}: "))
+                network_input = int(input(f"Insira o número de dispositivos da rede {netw+1}: "))
                 if network_input < 1:
-                    print("Only positive integers allowed")
+                    print("Insira apenas números intereiros positivos")
                 else:
                     networks[f'network_{netw}'] = {
                         'needed_hosts': network_input,
@@ -42,7 +42,7 @@ def vlsm():
                     }
                     break
             except ValueError:
-               print("Only positive integers allowed")
+               print("Insira apenas números intereiros positivos")
     counter = 0
     while counter < n_networks:
         cidr = 0
@@ -56,12 +56,12 @@ def vlsm():
     sorted_networks = dict(sorted(networks.items(), reverse=True, key=lambda item: item[1]['needed_hosts']))
     while True:
         try:
-            network0_ip = input("Insert the initial Network IP: ")
+            network0_ip = input("Insira o IP de rede inicial: ")
             ip = ipaddress.IPv4Address(network0_ip)
             network0 = ipaddress.ip_network(f"{ip}/{sorted_networks[list(sorted_networks)[0]]['cidr']}")
             break
         except (ValueError, UnboundLocalError):
-            print("Try again")
+            print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
     networks[list(sorted_networks)[0]]['network_mask'] = network0.netmask
     networks[list(sorted_networks)[0]]['hosts'] = (network0.num_addresses - 2)
     networks[list(sorted_networks)[0]]['network_ip'] = network0.network_address
@@ -78,17 +78,21 @@ def vlsm():
         networks[list(sorted_networks)[x+1]]['last_ip'] = network_n[-2]
         networks[list(sorted_networks)[x+1]]['broadcast_ip'] = network_n.broadcast_address
     sorted_networks = dict(sorted(networks.items(), reverse=True, key=lambda item: item[1]['needed_hosts']))
-    y -= 1
-    for y in range(n_networks):  
+    counter = -1
+    while counter < n_networks - 1: 
         print(dedent(f"""
-            Network {y+2}
-            CIDR: /{networks[list(sorted_networks)[y+1]]['cidr']}
-            Subnet Mask: {networks[list(sorted_networks)[y+1]]['network_mask']}
-            Network IP: {networks[list(sorted_networks)[y+1]]['network_ip']}
-            First Usable IP: {networks[list(sorted_networks)[y+1]]['first_ip']}
-            Last Usable IP: {networks[list(sorted_networks)[y+1]]['last_ip']}
-            Broadcast IP: {networks[list(sorted_networks)[y+1]]['broadcast_ip']}
+            Rede {counter+2} ({networks[list(sorted_networks)[counter+1]]['needed_hosts']} Dispositivos)
+            CIDR: /{networks[list(sorted_networks)[counter+1]]['cidr']}
+            Máscara de Rede: {networks[list(sorted_networks)[counter+1]]['network_mask']}
+            IP da Rede: {networks[list(sorted_networks)[counter+1]]['network_ip']}
+            Primeiro IP Disponível: {networks[list(sorted_networks)[counter+1]]['first_ip']}
+            Último IP Disponível: {networks[list(sorted_networks)[counter+1]]['last_ip']}
+            IP de Broadcast: {networks[list(sorted_networks)[counter+1]]['broadcast_ip']}
+            Total de IPs Disponíveis: {networks[list(sorted_networks)[counter+1]]['hosts']}
         """))
+        counter += 1
 
 vlsm()
+
+
 
