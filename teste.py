@@ -1,11 +1,6 @@
 import ipaddress
-import random
 from textwrap import dedent
-import hashlib
-import getpass
-import string
-import pprint
- 
+
 def vlsm():
     print("\033c", end="")
     print(dedent(f"""
@@ -98,6 +93,7 @@ def vlsm():
     getpass.getpass(prompt="")
 
 vlsm()
+
 
 
 
