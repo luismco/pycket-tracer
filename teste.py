@@ -57,11 +57,13 @@ def vlsm():
     while True:
         try:
             network0_ip = input("Insira o IP de rede inicial: ")
+            print()
             ip = ipaddress.IPv4Address(network0_ip)
             network0 = ipaddress.ip_network(f"{ip}/{sorted_networks[list(sorted_networks)[0]]['cidr']}")
             break
         except (ValueError, UnboundLocalError):
             print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
+            print()
     networks[list(sorted_networks)[0]]['network_mask'] = network0.netmask
     networks[list(sorted_networks)[0]]['hosts'] = (network0.num_addresses - 2)
     networks[list(sorted_networks)[0]]['network_ip'] = network0.network_address
@@ -80,15 +82,15 @@ def vlsm():
     sorted_networks = dict(sorted(networks.items(), reverse=True, key=lambda item: item[1]['needed_hosts']))
     counter = -1
     while counter < n_networks - 1: 
-        print(dedent(f"""
+        print(dedent(f"""\
             Rede {counter+2} ({networks[list(sorted_networks)[counter+1]]['needed_hosts']} Dispositivos)
-            CIDR: /{networks[list(sorted_networks)[counter+1]]['cidr']}
-            Máscara de Rede: {networks[list(sorted_networks)[counter+1]]['network_mask']}
-            IP da Rede: {networks[list(sorted_networks)[counter+1]]['network_ip']}
-            Primeiro IP Disponível: {networks[list(sorted_networks)[counter+1]]['first_ip']}
-            Último IP Disponível: {networks[list(sorted_networks)[counter+1]]['last_ip']}
-            IP de Broadcast: {networks[list(sorted_networks)[counter+1]]['broadcast_ip']}
-            Total de IPs Disponíveis: {networks[list(sorted_networks)[counter+1]]['hosts']}
+            - CIDR: /{networks[list(sorted_networks)[counter+1]]['cidr']}
+            - Máscara de Rede: {networks[list(sorted_networks)[counter+1]]['network_mask']}
+            - IP da Rede: {networks[list(sorted_networks)[counter+1]]['network_ip']}
+            - Primeiro IP Disponível: {networks[list(sorted_networks)[counter+1]]['first_ip']}
+            - Último IP Disponível: {networks[list(sorted_networks)[counter+1]]['last_ip']}
+            - IP de Broadcast: {networks[list(sorted_networks)[counter+1]]['broadcast_ip']}
+            - Total de IPs Disponíveis: {networks[list(sorted_networks)[counter+1]]['hosts']}
         """))
         counter += 1
 
