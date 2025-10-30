@@ -92,6 +92,9 @@ def vlsm():
         """))
         counter += 1
 
+    print("Clique enter para sair")
+    getpass.getpass(prompt="")
+
 vlsm()
 
 
