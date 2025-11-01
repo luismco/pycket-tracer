@@ -5,9 +5,9 @@ import math
 
 tools = [
     "1. IP Address Conversion (Binary to Decimal)", 
-    "2. IP Address Conversion (Decimal to Binary)", 
-    "3. IP Subnet Calculator", 
-    "4. IP Classification",
+    "2. IP Address Conversion (Decimal to Binary)",
+    "3. IP Classification", 
+    "4. Subnet Calculator", 
     "5. Subnetting",
     "6. VLSM",
 ]
@@ -95,65 +95,6 @@ def tool(option):
         toolHeader()
         while True:
             try:
-                binaryIP = input("Enter an IP address (Binary): ")
-                if binaryIP == "":
-                    print()
-                    break
-                else:
-                    binaryIP = binaryIP.replace(".", "")
-                    if len(binaryIP) == 32:
-                        binaryIP = int(binaryIP, 2)
-                        ip = ipaddress.IPv4Address(binaryIP)
-                        resultHeader()
-                        print(f"IP address (Decimal): {ip}")
-                        print("=" * 50, "\n")
-                        break
-                    else:
-                        print(f"Only valid IP addresses allowed (Ex.: '{defaultBinaryIP()}')")
-            except ValueError:
-                print(f"Only valid IP addresses allowed (Ex.: '{defaultBinaryIP()}')")
-        submenu()
-    elif option == 3:
-        toolHeader()
-        while True:
-            try:
-                hosts = input("Hosts required: ")
-                if hosts == "":
-                    print()
-                    submenu()
-                else:
-                    hosts = int(hosts)
-                    break
-            except ValueError:
-                print("Enter integers only")
-        totalHosts = hosts + 2
-        bits = 0
-        while (2 ** bits) < totalHosts:
-            bits += 1
-        cidr = 32 - bits
-        while True:
-            try:
-                decimalIP = input("Enter the desired network IP: ")
-                ip = ipaddress.IPv4Address(decimalIP)
-                network = ipaddress.ip_network(f"{ip}/{cidr}")
-                print("=" * 50)
-                print(dedent(f"""\
-                - Subnet Mask: {network.netmask}
-                - CIDR: /{cidr}
-                - Available IPs: {network.num_addresses - 2}
-                - Network IP: {network.network_address}
-                - First Usable IP: {ipaddress.IPv4Network(network)[1]}
-                - Last Usable IP: {ipaddress.IPv4Network(network)[-2]}
-                - Broadcast IP: {network.broadcast_address}"""))
-                print("\n", "=" * 50, "\n")
-                break
-            except (ValueError, UnboundLocalError):
-                print("Only valid network IP allowed (Ex:. 10.0.0.0)")
-        submenu()
-    elif option == 4:
-        toolHeader()
-        while True:
-            try:
                 ip = input("Enter an IP address (Decimal): ")
                 if ip == "":
                     print()
@@ -197,6 +138,43 @@ def tool(option):
                         break
             except ValueError:
                 print(f"Only valid IP addresses allowed (Ex.: '{defaultDecimalIP()}')")
+        submenu()
+    elif option == 4:
+        toolHeader()
+        while True:
+            try:
+                hosts = input("Hosts required: ")
+                if hosts == "":
+                    print()
+                    submenu()
+                else:
+                    hosts = int(hosts)
+                    break
+            except ValueError:
+                print("Enter integers only")
+        totalHosts = hosts + 2
+        bits = 0
+        while (2 ** bits) < totalHosts:
+            bits += 1
+        cidr = 32 - bits
+        while True:
+            try:
+                decimalIP = input("Enter the desired network IP: ")
+                ip = ipaddress.IPv4Address(decimalIP)
+                network = ipaddress.ip_network(f"{ip}/{cidr}")
+                print("=" * 50)
+                print(dedent(f"""
+                - Subnet Mask: {network.netmask}
+                - CIDR: /{cidr}
+                - Available IPs: {network.num_addresses - 2}
+                - Network IP: {network.network_address}
+                - First Usable IP: {ipaddress.IPv4Network(network)[1]}
+                - Last Usable IP: {ipaddress.IPv4Network(network)[-2]}
+                - Broadcast IP: {network.broadcast_address}"""))
+                print("=" * 50, "\n")
+                break
+            except (ValueError, UnboundLocalError):
+                print("Only valid network IP allowed (Ex:. 10.0.0.0)")
         submenu()
     elif option == 5:
         toolHeader()
