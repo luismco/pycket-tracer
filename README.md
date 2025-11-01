@@ -47,7 +47,7 @@ If you intend to test the networking tools, please use [Pycket Tracer Tools](htt
 * Subnetting
   - Based on number of needed networks
 * VLSM
-  - Based on number of hosts needed per network
+  - Based on number of needed hosts per network
 
 ## How To Use
 
