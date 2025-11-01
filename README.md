@@ -10,11 +10,24 @@
 <h4 align="center">Python Module (25H) • Final Project</h4>
 <br><br>
 
+Final project for a Python Module (25H) within a Networking and Cyber Sercurity course
+The repository has 2 Python files:
+* [Pycket Tracer Tools](https://github.com/luismco/pycket-tracer/blob/main/pycket-tracer.py)
+  - Full Netwoking Tools
+  - English
+* [Project](https://github.com/luismco/pycket-tracer/blob/main/project.py)
+  - Basic Networking Tools
+  - User Accounts and Administration (Required for the project)
+  - Portuguese
+
+The project file is not intended for general use.<br>
+<br>
+If you intend to test the networking tools, please use [Pycket Tracer Tools](https://github.com/luismco/pycket-tracer/blob/main/pycket-tracer.py) since it can be used without any user account and it has a more complete tool set available.
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
   <a href="#how-to-use">How To Use</a> •
-  <a href="#credits">Modules</a>
+  <a href="#modules">Modules</a>
 </p>
 
 <p align="center">
@@ -30,12 +43,11 @@
   - Based on number of hosts needed
 * IP Classification
   - Private vs Public
-* User Administration
-  - Add users
-  - Remove users
-  - Change passwords
-  - Change roles
-  - Basic password encryption
+  - IP Classes
+* Subnetting
+  - Based on number of needed networks
+* VLSM
+  - Based on number of hosts needed per network
 
 ## How To Use
 
@@ -63,7 +75,5 @@ This software uses the following python modules
 - hashlib
 - getpass
 - string
-
----
 
 
