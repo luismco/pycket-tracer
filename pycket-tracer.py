@@ -1,61 +1,21 @@
 import ipaddress
-import random
 from textwrap import dedent
-import hashlib
+import random
 import getpass
-import string
-
-lowercase = string.ascii_lowercase
-uppercase = string.ascii_uppercase
-numbers = string.digits
-special = string.punctuation
-
-database = {
-    'luis': {'password': '20f15cfb78a1c83af3bd7976a78952ea1b1ed435a706bb04ba2c83c7fd0a4965', 'role': 'admin'}, 
-    'diogo': {'password': '9ca6a0e5e922e01e20f11d999ecc1685e969c9acc2abc83006281c131fe22a15', 'role': 'admin'},
-    'ruben': {'password': 'c1cc69e61c0f1c7ade8df0f2994e582e7c1f2c57d1ec192a0baf9f96b7739d9d', 'role': 'user'}
-}
+import math
 
 tools = [
-    "1. Conversão de IP (Decimal para Binário)", 
-    "2. Conversão de IP (Binário para Decimal)", 
-    "3. Cálculo da Máscara de Rede/CIDR", 
-    "4. Classicação de IPs (Privado vs Público)",
-    "5. Alterar Password",
-    "6. Terminar sessão",
-    "7. Administração de Utilizadores"
+    "1. IP Address Conversion (Binary to Decimal)", 
+    "2. IP Address Conversion (Decimal to Binary)", 
+    "3. IP Subnet Calculator", 
+    "4. IP Classification",
+    "5. Subnetting",
+    "6. VLSM",
 ]
-
-current_user = None
 
 #########################
 ### Menus and Headers ###
 #########################
-def mainHeader():
-    print("\033c", end="")
-    print(dedent(f"""\
-        {"=" * 50}
-        Projeto Final Python
-        Pycket Tracer - Ferramenta de Apoio a Networking
-        Diogo Fontes | Luís Oliveira
-        {"=" * 50}
-        1. Login
-        2. Registar Utilizador
-        """))
-    while True:
-        try:
-            main_option = input("Selecione a opção desejada (Clique enter para sair): ")
-            if main_option == "":
-                exit()
-            elif int(main_option) == 1:
-                login()
-            elif int(main_option) == 2:
-                signin()
-            else:
-                print("Insira apenas opções entre 1 e 2")
-        except ValueError:
-            print("Insira apenas opções entre 1 e 2")
-
 def menu():
         print("\033c", end="")
         global option
@@ -63,36 +23,28 @@ def menu():
             {"=" * 50}
             Pycket Tracer Tools
             {"=" * 50}"""))
-        if database[current_user]['role'] == 'admin':
-            print(*tools,sep="\n")
-        else:
-            print(*tools[:-1],sep="\n")
+        print(*tools,sep="\n")
         while True:
             try:
-                option = input("\nSelecione a ferramenta desejada (Clique enter para sair): ")
+                option = input("\nSelect tool (Enter to exit): ")
                 if option == "":
                     exit()
-                if database[current_user]['role'] == 'admin':
-                    if int(option) >= 1 and int(option) <= 7:
-                        tool(int(option))
-                    else:
-                        print("Insira apenas opções entre 1 e 7")
                 else:
                     if int(option) >= 1 and int(option) <= 6:
                         tool(int(option))
                     else:
-                        print("Insira apenas opções entre 1 e 6")
+                        print("Valid options: 1 to 6")
             except ValueError:
-                print("Insira apenas opções mostradas")
+                print("Valid options: 1 to 6")
 
 def submenu():
     print(dedent(f"""\
-        1. Voltar ao menu principal
-        0. Sair     
+        1. Main Menu
+        0. Exit    
         """))
     while True:
         try:
-            sub_option = input("Selecione a opção desejada (Clique enter para continuar na ferramenta atual): ")
+            sub_option = input("Select option (Enter to continue on current tool): ")
             if sub_option == "":
                 tool(int(option))
             elif int(sub_option) == 1:
@@ -100,55 +52,14 @@ def submenu():
             elif int(sub_option) == 0:
                 exit()
             else:
-                print("Insira apenas opções entre 0 e 1")
+                print("Valid options: 0 or 1")
         except ValueError:
-            print("Insira apenas opções entre 0 e 1")
-
-def administration():
-    global admin_option
-    print("\033c", end="")
-    print(dedent(f"""
-        {"=" * 50}
-        Administração de Utilizadores
-        {"=" * 50}
-        1. Registar Utilizador
-        2. Remover Utilizador
-        3. Listar Utilizadores
-        4. Alterar Passwords
-        5. Alterar Permissões
-        """))
-    while True:
-        try:
-            admin_option = input("Selecione a opção desejada (Clique enter para voltar ao menu principal): ")
-            if admin_option == "":
-                menu()
-            elif int(admin_option) == 1:
-                signin()
-            elif int(admin_option) == 2:
-                removeUser()
-            elif int(admin_option) == 3:
-                print("\033c", end="")
-                print(dedent(f"""
-                    {"=" * 50}
-                    Lista de Utilizadores
-                    {"=" * 50}
-                    {list(database.keys())}"""))
-                print(f"\nClique enter para voltar ao menu anterior")
-                getpass.getpass(prompt="")
-                administration()
-            elif int(admin_option) == 4:
-                changePasswordAdmin()
-            elif int(admin_option) == 5:
-                changeRole()
-            else:
-                print("Insira apenas opções entre 1 e 4")
-        except ValueError:
-            print("Insira apenas opções entre 1 e 4")
+            print("Valid options: 0 or 1")
 
 def resultHeader():
     print(dedent(f"""
         {"=" * 50}
-        *** Resultado ***"""))
+        *** Result ***"""))
 
 def toolHeader():
     toolTitle = tools[int(option)-1]
@@ -162,270 +73,30 @@ def toolHeader():
 ######################
 ### Main Functions ###
 ######################
-def login():
-    print("\033c", end="")
-    global username_input
-    print(dedent(f"""
-        {"=" * 50}
-        Login
-        {"=" * 50}"""))
-    while True:
-        username_input = input("Utilizador: ")
-        if username_input == "":
-           mainHeader()
-        elif username_input in database:
-            break
-        else:
-            print("Utilizador não encontrado")
-    password_check()
-    print(f"\nBem vindo, {username_input.capitalize()}!")
-    global current_user
-    current_user = username_input
-    menu()
-
-def signin():
-    print("\033c", end="")
-    print(dedent(f"""
-        {"=" * 50}
-        Registar Novo Utilizador
-        {"=" * 50}"""))
-    while True:          
-        username_input = input("Utilizador: ")
-        if username_input == "":
-            if current_user is None:
-                mainHeader()
-            else:
-                administration()
-        elif len(username_input) < 3:
-            print("Insira pelo menos 3 caracteres")
-        else:
-            break
-    if username_input not in database:
-        password_get()
-        database[username_input] = {
-            'password': hashed_password,
-            'role':'user'
-            }
-        print(f"\nLogin para o utilizador '{username_input}' criado com sucesso!")
-        print("\nClique enter para voltar ao menu anterior")
-        getpass.getpass(prompt="")
-        if current_user is None:
-            login()
-        else:
-            administration()
-    else:
-        print(f"O utilizador {username_input} já existe")
-        print("\nClique enter para voltar ao menu anterior")
-        getpass.getpass(prompt="")
-        if current_user is None:
-            mainHeader()
-        else:
-            administration()
-
-def removeUser():
-    print("\033c", end="")
-    print(dedent(f"""
-        {"=" * 50}
-        Remover Utilizador
-        {"=" * 50}"""))
-    while True:
-        username_input = input("Utilizador a remover: ")
-        if username_input == "":
-           administration()
-        elif username_input == current_user:
-            print("Não pode eliminar o utilizador atual")
-        elif username_input in database:
-            while True:
-                try:
-                    remove_confirm = input(dedent(f"""
-                    Tem a certeza que quer eliminar o utlizador {username_input}?
-                    1. Sim
-                    2. Não
-
-                    Selecione a opção desejada: """))
-                    if int(remove_confirm) == 1:
-                        database.pop(username_input)
-                        print(f"\nUtilizador '{username_input}' removido com sucesso!")
-                        print("\nClique enter para voltar ao menu anterior")
-                        getpass.getpass(prompt="")
-                        administration()
-                    elif int(remove_confirm) == 2:
-                        administration()
-                    else:
-                        print("Insira apenas opções entre 1 e 2")
-                except ValueError:
-                    print("Insira apenas opções entre 1 e 2")             
-        else:
-            print("Utilizador não encontrado")
-
-def changePasswordAdmin():
-    print("\033c", end="")
-    print(dedent(f"""
-        {"=" * 50}
-        Alteração de Password
-        {"=" * 50}"""))
-    while True:
-        username_input = input("Alterar password para o utilizador: ")
-        if username_input == "":
-            administration()
-        elif username_input in database:
-            break
-        else:
-            print("Utilizador não encontrado")
-    print("*** Nova Password ***")
-    password_get()
-    database[username_input]['password'] = hashed_password
-    print(f"\nA password do utilizador '{username_input}' foi atualizada com sucesso!")
-    print("\nClique enter para voltar ao menu anterior")
-    getpass.getpass(prompt="")
-    administration()
-
-def changePassword():
-    print("\033c", end="")
-    print(dedent(f"""
-        {"=" * 50}
-        Alteração de Password
-        {"=" * 50}"""))
-    print("*** Password Atual ***")
-    password_check()
-    print("*** Nova Password ***")
-    password_get()
-    database[current_user]['password'] = hashed_password
-    print(f"\nA sua password foi atualizada com sucesso!")
-    print("\nClique enter para voltar ao menu anterior")
-    getpass.getpass(prompt="")
-    menu()
-
-def changeRole():
-    print("\033c", end="")
-    print(dedent(f"""
-        {"=" * 50}
-        Alteração de Permissões
-        {"=" * 50}"""))
-    while True:
-        username_input = input("Alterar permissões para o utilizador: ")
-        if username_input == "":
-            administration()
-        elif username_input in database:
-            if username_input == current_user:
-                print("Não pode alterar as permissões do utilizador atual")
-            else:
-                break
-        else:
-            print("Utilizador não encontrado")
-    current_role = database[username_input]['role']
-    if current_role == 'admin':
-        new_role = 'user'
-    else:
-        new_role = 'admin'
-    print(dedent(f"""
-        *** Permissões Atuais ***
-        Utilizador: {username_input}
-        Permissões: {current_role}\n
-        1. Alterar permissões ({current_role} para {new_role})
-        2. Manter permissões ({current_role})
-        """))
-    while True:
-        try:
-            role_option = input("Selecione a opção desejada: ")
-            if int(role_option) == 1:
-                database[username_input]['role'] = new_role
-                print(f"\nAs permissões do utilizador '{username_input}' foram alteradas com sucesso!")
-                print("\nClique enter para voltar ao menu anterior")
-                getpass.getpass(prompt="")
-                break
-            elif int(role_option) == 2:
-                print(f"As permissões do utilizador '{username_input}' foram mantidas!")
-                print("\nClique enter para voltar ao menu anterior")
-                getpass.getpass(prompt="")
-                break
-            else:
-                print("Insira apenas opções entre 1 e 2")
-        except ValueError:
-            print("Insira apenas opções entre 1 e 2")
-    administration()
-
-def password_get():
-    global hashed_password
-    while True:
-            password = getpass.getpass()
-            if len(password) < 8:
-                print("A password tem que ter um mínimo de 8 caracteres")
-            else:
-                lowercase_check = False
-                uppercase_check = False
-                numbers_check = False
-                special_check = False
-                for char in password:
-                    if char in lowercase:
-                        lowercase_check = True
-                    elif char in uppercase:
-                        uppercase_check = True
-                    elif char in numbers:
-                        numbers_check = True
-                    elif char in special:
-                        special_check = True
-                if all([lowercase_check, uppercase_check, numbers_check, special_check]):
-                    break
-                else:
-                    print(dedent(f"""
-                        *** Requisitos de Password ***
-                        A password deve conter letras minúsculas, maiúsculas, números e caracteres especias ({special})
-                        """))
-    password = password.encode()
-    sha256 = hashlib.sha256()
-    sha256.update(password)
-    hashed_password = sha256.hexdigest()
-
-def password_check():
-    max_attempts = 3
-    attempts = 0
-    while attempts < max_attempts:
-        password_input = getpass.getpass().encode()
-        sha256 = hashlib.sha256()
-        sha256.update(password_input)
-        hashed_input_password = sha256.hexdigest()
-        if database[username_input]['password'] == hashed_input_password:
-            break
-        else:
-            attempts += 1
-            if attempts < max_attempts:
-                print(dedent(f"""
-                    {"=" * 50}
-                    Password incorreta
-                    Tentativas restantes: {max_attempts - attempts}
-                    {"=" * 50}
-                    """))
-            else:
-                print("Atingiu o número máximo de tentativas")
-                print("Clique enter para sair")
-                getpass.getpass(prompt="")
-                exit()
-
 def tool(option):
     print("\033c", end="")
     if option == 1:
         toolHeader()
         while True:
             try:
-                decimalIP = input("Insira um endereço de IPv4 em formato decimal: ")
+                decimalIP = input("Enter an IP Address (Decimal): ")
                 if decimalIP == "":
                     print()
                     break
                 else:
                     ip = ('{:b}'.format(ipaddress.IPv4Address(decimalIP)))
                     resultHeader()
-                    print(f"IP em formato binário: {ip[0:9]}.{ip[9:17]}.{ip[17:25]}.{ip[25:33]}")
+                    print(f"IP address (Binary): {ip[0:9]}.{ip[9:17]}.{ip[17:25]}.{ip[25:33]}")
                     print("=" * 50, "\n")
                     break
             except ValueError:
-                print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
+                print(f"Only valid IP Addresses allowed (Ex.: '{defaultDecimalIP()}')")
         submenu()
     elif option == 2:
         toolHeader()
         while True:
             try:
-                binaryIP = input("Insira um endereço de IPv4 em formato binário: ")
+                binaryIP = input("Enter an IP address (Binary): ")
                 if binaryIP == "":
                     print()
                     break
@@ -435,19 +106,19 @@ def tool(option):
                         binaryIP = int(binaryIP, 2)
                         ip = ipaddress.IPv4Address(binaryIP)
                         resultHeader()
-                        print(f"IP em formato decimal: {ip}")
+                        print(f"IP address (Decimal): {ip}")
                         print("=" * 50, "\n")
                         break
                     else:
-                        print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
+                        print(f"Only valid IP addresses allowed (Ex.: '{defaultBinaryIP()}')")
             except ValueError:
-                print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
+                print(f"Only valid IP addresses allowed (Ex.: '{defaultBinaryIP()}')")
         submenu()
     elif option == 3:
         toolHeader()
         while True:
             try:
-                hosts = input("Insira o número de dispositivos necessários: ")
+                hosts = input("Hosts required: ")
                 if hosts == "":
                     print()
                     submenu()
@@ -455,7 +126,7 @@ def tool(option):
                     hosts = int(hosts)
                     break
             except ValueError:
-                print("Insira apenas números inteiros")
+                print("Enter integers only")
         totalHosts = hosts + 2
         bits = 0
         while (2 ** bits) < totalHosts:
@@ -463,53 +134,186 @@ def tool(option):
         cidr = 32 - bits
         while True:
             try:
-                decimalIP = input("Insira o IPv4 da rede: ")
+                decimalIP = input("Enter the desired network IP: ")
                 ip = ipaddress.IPv4Address(decimalIP)
                 network = ipaddress.ip_network(f"{ip}/{cidr}")
-                resultHeader()
+                print("=" * 50)
                 print(dedent(f"""\
-                Máscara de Rede Adequeada: {network.netmask}
-                CIDR adequado: /{cidr}
-                Número de IPs disponíveis: {network.num_addresses - 2}
-                IP da rede: {network.network_address}
-                Primero IP Disponível: {ipaddress.IPv4Network(network)[1]}
-                Último IP Disponível: {ipaddress.IPv4Network(network)[-2]}
-                IP de Broadcast: {network.broadcast_address}"""))
-                print("=" * 50, "\n")
+                - Subnet Mask: {network.netmask}
+                - CIDR: /{cidr}
+                - Available IPs: {network.num_addresses - 2}
+                - Network IP: {network.network_address}
+                - First Usable IP: {ipaddress.IPv4Network(network)[1]}
+                - Last Usable IP: {ipaddress.IPv4Network(network)[-2]}
+                - Broadcast IP: {network.broadcast_address}"""))
+                print("\n", "=" * 50, "\n")
                 break
             except (ValueError, UnboundLocalError):
-                print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
+                print("Only valid network IP allowed (Ex:. 10.0.0.0)")
         submenu()
     elif option == 4:
         toolHeader()
         while True:
             try:
-                ip = input("Insira um endereço de IPv4: ")
+                ip = input("Enter an IP address (Decimal): ")
                 if ip == "":
                     print()
                     break
                 else:
                     if ipaddress.IPv4Address(ip).is_private is True:
                         resultHeader()
-                        print(f"O IP '{ip}' é um IP Privado")
+                        print(f"The IP '{ip}' is private")
                         print("=" * 50, "\n")
                         break
                     else:
                         resultHeader()
-                        print(f"O IP '{ip}' é um IP Público")
+                        print(f"The IP '{ip}' is public")
                         print("=" * 50, "\n")
                         break
             except ValueError:
-                print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
+                print(f"Only valid IP addresses allowed (Ex.: '{defaultDecimalIP()}')")
         submenu()
     elif option == 5:
-        changePassword()
+        toolHeader()
+        while True:
+            try:
+                n_networks = int(input("Number of networks to configure: "))
+                if n_networks == "":
+                    submenu()
+                elif n_networks < 2:
+                    print("Only positive integers allowed")
+                else:
+                    break
+            except ValueError:
+                print("Only positive integers allowed")
+        while True:
+            try:
+                network_ip = input("Enter the desired initial network IP(CIDR): ")
+                print()
+                network = ipaddress.ip_network(network_ip)
+                break
+            except (ValueError, UnboundLocalError):
+                print("Only valid network IP(CIDR) allowed (Ex:. 10.0.0.0/8)")
+                print()
+        networks = {}
+        bits_needed = math.ceil(math.log2(n_networks))
+        new_prefix = network.prefixlen + bits_needed
+        subnets = list(network.subnets(new_prefix=new_prefix))
+        for netw in range(n_networks):
+            networks[f'network_{netw}'] = {
+                'network_ip': subnets[netw],
+                'network_mask': subnets[netw].netmask,
+                'cidr': subnets[netw].prefixlen,
+                'hosts': subnets[netw].num_addresses-2,
+                'first_ip': subnets[netw][1],
+                'last_ip': subnets[netw][-2],
+                'broadcast_ip': subnets[netw].broadcast_address
+            }
+            netw += 1
+        counter = 0
+        print("=" * 50)
+        while counter < n_networks: 
+            print(dedent(f"""
+                Network {counter+1}
+                - CIDR: /{networks[list(networks)[counter]]['cidr']}
+                - Subnet Mask: {networks[list(networks)[counter]]['network_mask']}
+                - Network IP: {networks[list(networks)[counter]]['network_ip']}
+                - First Usable IP: {networks[list(networks)[counter]]['first_ip']}
+                - Last Usable IP: {networks[list(networks)[counter]]['last_ip']}
+                - Broadcast IP: {networks[list(networks)[counter]]['broadcast_ip']}
+                - Total Usable IPs: {networks[list(networks)[counter]]['hosts']}"""))
+            counter += 1
+        print("\n", "=" * 50, "\n")
+        submenu()
+ 
+
     elif option == 6:
-        global current_user
-        current_user = None
-        mainHeader()
-    elif option == 7:
-        administration()
+        toolHeader()
+        while True:
+            try:
+                n_networks = int(input("Number of networks to configure: "))
+                if n_networks == "":
+                    submenu()
+                elif n_networks < 1:
+                    print("Only positive integers allowed")
+                else:
+                    break
+            except ValueError:
+                print("Only positive integers allowed")
+        networks = {}
+        for netw in range(n_networks):
+            while True:
+                try:
+                    network_input = int(input(f"Hosts required for network {netw+1}: "))
+                    if network_input < 1:
+                        print("Only positive integers allowed")
+                    else:
+                        networks[f'network_{netw}'] = {
+                            'needed_hosts': network_input,
+                            'needed_ips': network_input + 2,
+                            'network_mask': None,
+                            'cidr': None,
+                            'hosts': None,
+                            'network_ip': None,
+                            'first_ip': None,
+                            'last_ip': None,
+                            'broadcast_ip': None
+                        }
+                        break
+                except ValueError:
+                    print("Only positive integers allowed")
+        counter = 0
+        while counter < n_networks:
+            cidr = 0
+            bits = 0
+            totalHosts = networks[f'network_{counter}']['needed_ips']
+            while (2 ** bits) < totalHosts:
+                bits += 1
+                cidr = (32 - bits)
+            networks[f'network_{counter}']['cidr'] = cidr
+            counter += 1
+        sorted_networks = dict(sorted(networks.items(), reverse=True, key=lambda item: item[1]['needed_hosts']))
+        while True:
+            try:
+                network0_ip = input("Enter the desired initial network IP: ")
+                print()
+                ip = ipaddress.IPv4Address(network0_ip)
+                network0 = ipaddress.ip_network(f"{ip}/{sorted_networks[list(sorted_networks)[0]]['cidr']}")
+                break
+            except (ValueError, UnboundLocalError):
+                print("Only valid network IP allowed (Ex:. 10.0.0.0)")
+                print()
+        networks[list(sorted_networks)[0]]['network_mask'] = network0.netmask
+        networks[list(sorted_networks)[0]]['hosts'] = (network0.num_addresses - 2)
+        networks[list(sorted_networks)[0]]['network_ip'] = network0.network_address
+        networks[list(sorted_networks)[0]]['first_ip'] = network0[1]
+        networks[list(sorted_networks)[0]]['last_ip'] = network0[-2]
+        networks[list(sorted_networks)[0]]['broadcast_ip'] = network0.broadcast_address
+        for x in range(n_networks - 1):
+            network_ip = (sorted_networks[list(sorted_networks)[x]]['broadcast_ip'])+1
+            network_n = ipaddress.ip_network(f"{network_ip}/{sorted_networks[list(sorted_networks)[x+1]]['cidr']}")
+            networks[list(sorted_networks)[x+1]]['network_mask'] = network_n.netmask
+            networks[list(sorted_networks)[x+1]]['hosts'] = (network_n.num_addresses - 2)
+            networks[list(sorted_networks)[x+1]]['network_ip'] = network_n.network_address
+            networks[list(sorted_networks)[x+1]]['first_ip'] = network_n[1]
+            networks[list(sorted_networks)[x+1]]['last_ip'] = network_n[-2]
+            networks[list(sorted_networks)[x+1]]['broadcast_ip'] = network_n.broadcast_address
+        sorted_networks = dict(sorted(networks.items(), reverse=True, key=lambda item: item[1]['needed_hosts']))
+        counter = -1
+        resultHeader()
+        while counter < n_networks - 1: 
+            print(dedent(f"""
+                Network {counter+2} ({networks[list(sorted_networks)[counter+1]]['needed_hosts']} hosts)
+                - CIDR: /{networks[list(sorted_networks)[counter+1]]['cidr']}
+                - Subnet Mask: {networks[list(sorted_networks)[counter+1]]['network_mask']}
+                - Network IP: {networks[list(sorted_networks)[counter+1]]['network_ip']}
+                - First Usable IP: {networks[list(sorted_networks)[counter+1]]['first_ip']}
+                - Last Usable IP: {networks[list(sorted_networks)[counter+1]]['last_ip']}
+                - Broadcast IP: {networks[list(sorted_networks)[counter+1]]['broadcast_ip']}
+                - Total Usable IPs: {networks[list(sorted_networks)[counter+1]]['hosts']}"""))
+            counter += 1
+        print("=" * 50, "\n")
+        submenu()
 
 #######################
 ### Other Functions ###
@@ -527,4 +331,4 @@ def defaultBinaryIP():
     randIP = "".join(randIP)
     return f"{randIP[0:9]}.{randIP[9:17]}.{randIP[17:25]}.{randIP[25:33]}"
 
-mainHeader()
+menu()
