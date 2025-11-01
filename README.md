@@ -10,7 +10,7 @@
 <h4 align="center">Python Module (25H) • Final Project</h4>
 <br><br>
 
-Final project for a Python Module (25H) within a Networking and Cyber Sercurity course
+Final project for a Python Module (25H) within a Networking and Cyber Security course
 The repository has 2 Python files:
 * [Pycket Tracer Tools](https://github.com/luismco/pycket-tracer/blob/main/pycket-tracer.py)
   - Full Netwoking Tools
