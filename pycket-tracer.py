@@ -180,11 +180,11 @@ def tool(option):
                 if n_networks == "":
                     submenu()
                 elif n_networks < 2:
-                    print("Only positive integers allowed")
+                    print("Only integers greater than 1 allowed")
                 else:
                     break
             except ValueError:
-                print("Only positive integers allowed")
+                print("Only integers greater than 1 allowed")
         while True:
             try:
                 network_ip = input("Enter the desired initial network IP(CIDR): ")
