@@ -1,7 +1,6 @@
 import ipaddress
 from textwrap import dedent
 import random
-import getpass
 import math
 
 tools = [
@@ -330,5 +329,6 @@ def defaultBinaryIP():
         randIP.append(str(random.randrange(0,2)))
     randIP = "".join(randIP)
     return f"{randIP[0:9]}.{randIP[9:17]}.{randIP[17:25]}.{randIP[25:33]}"
+
 
 menu()
