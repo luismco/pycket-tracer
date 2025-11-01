@@ -19,9 +19,9 @@ def menu():
         print("\033c", end="")
         global option
         print(dedent(f"""
-            {"=" * 50}
+            {"=" * 80}
             Pycket Tracer Tools
-            {"=" * 50}"""))
+            {"=" * 80}"""))
         print(*tools,sep="\n")
         while True:
             try:
@@ -57,16 +57,16 @@ def submenu():
 
 def resultHeader():
     print(dedent(f"""
-        {"=" * 50}
+        {"=" * 80}
         *** Result ***"""))
 
 def toolHeader():
     toolTitle = tools[int(option)-1]
     print(dedent(f"""
-        {"=" * 50}
+        {"=" * 80}
         Pycket Tracer Tools
         {toolTitle[3:]}
-        {"=" * 50}
+        {"=" * 80}
         """))
 
 ######################
@@ -86,12 +86,34 @@ def tool(option):
                     ip = ('{:b}'.format(ipaddress.IPv4Address(decimalIP)))
                     resultHeader()
                     print(f"IP address (Binary): {ip[0:9]}.{ip[9:17]}.{ip[17:25]}.{ip[25:33]}")
-                    print("=" * 50, "\n")
+                    print("=" * 80, "\n")
                     break
             except ValueError:
                 print(f"Only valid IP Addresses allowed (Ex.: '{defaultDecimalIP()}')")
         submenu()
     elif option == 2:
+        toolHeader()
+        while True:
+            try:
+                binaryIP = input("Enter an IP address (Binary): ")
+                if binaryIP == "":
+                    print()
+                    break
+                else:
+                    binaryIP = binaryIP.replace(".", "")
+                    if len(binaryIP) == 32:
+                        binaryIP = int(binaryIP, 2)
+                        ip = ipaddress.IPv4Address(binaryIP)
+                        resultHeader()
+                        print(f"IP address (Decimal): {ip}")
+                        print("=" * 80, "\n")
+                        break
+                    else:
+                        print(f"Only valid IP addresses allowed (Ex.: '{defaultBinaryIP()}')")
+            except ValueError:
+                print(f"Only valid IP addresses allowed (Ex.: '{defaultBinaryIP()}')")
+        submenu()
+    elif option == 3:
         toolHeader()
         while True:
             try:
@@ -109,32 +131,32 @@ def tool(option):
                     if ipaddress.IPv4Address(ip).is_reserved is True:
                         resultHeader()
                         print(f"The IP '{ip}' is reserved (Class E)")
-                        print("=" * 50, "\n")
+                        print("=" * 80, "\n")
                         break
                     elif ipaddress.IPv4Address(ip).is_link_local is True:
                         resultHeader()
                         print(f"The IP '{ip}' is link local")
-                        print("=" * 50, "\n")
+                        print("=" * 80, "\n")
                         break
                     elif ipaddress.IPv4Address(ip).is_loopback is True:
                         resultHeader()
                         print(f"The IP '{ip}' is loopback")
-                        print("=" * 50, "\n")
+                        print("=" * 80, "\n")
                         break
                     elif ipaddress.IPv4Address(ip).is_multicast is True:
                         resultHeader()
                         print(f"The IP '{ip}' is multicast (Class D)")
-                        print("=" * 50, "\n")
+                        print("=" * 80, "\n")
                         break
                     elif ipaddress.IPv4Address(ip).is_private is True:
                         resultHeader()
                         print(f"The IP '{ip}' is private ({ip_class})")
-                        print("=" * 50, "\n")
+                        print("=" * 80, "\n")
                         break
                     else:
                         resultHeader()
                         print(f"The IP '{ip}' is public ({ip_class})")
-                        print("=" * 50, "\n")
+                        print("=" * 80, "\n")
                         break
             except ValueError:
                 print(f"Only valid IP addresses allowed (Ex.: '{defaultDecimalIP()}')")
@@ -162,16 +184,18 @@ def tool(option):
                 decimalIP = input("Enter the desired network IP: ")
                 ip = ipaddress.IPv4Address(decimalIP)
                 network = ipaddress.ip_network(f"{ip}/{cidr}")
-                print("=" * 50)
+                print()
+                print("=" * 80)
                 print(dedent(f"""
-                - Subnet Mask: {network.netmask}
-                - CIDR: /{cidr}
-                - Available IPs: {network.num_addresses - 2}
-                - Network IP: {network.network_address}
-                - First Usable IP: {ipaddress.IPv4Network(network)[1]}
-                - Last Usable IP: {ipaddress.IPv4Network(network)[-2]}
-                - Broadcast IP: {network.broadcast_address}"""))
-                print("=" * 50, "\n")
+                    - Subnet Mask: {network.netmask}
+                    - CIDR: /{cidr}
+                    - Available IPs: {network.num_addresses - 2}
+                    - Network IP: {network.network_address}
+                    - First Usable IP: {ipaddress.IPv4Network(network)[1]}
+                    - Last Usable IP: {ipaddress.IPv4Network(network)[-2]}
+                    - Broadcast IP: {network.broadcast_address}
+                """))
+                print("=" * 80, "\n")
                 break
             except (ValueError, UnboundLocalError):
                 print("Only valid network IP allowed (Ex:. 10.0.0.0)")
@@ -214,7 +238,7 @@ def tool(option):
             }
             netw += 1
         counter = 0
-        print("=" * 50)
+        print("=" * 80)
         while counter < n_networks: 
             print(dedent(f"""
                 Network {counter+1}
@@ -226,7 +250,8 @@ def tool(option):
                 - Broadcast IP: {networks[list(networks)[counter]]['broadcast_ip']}
                 - Total Usable IPs: {networks[list(networks)[counter]]['hosts']}"""))
             counter += 1
-        print("\n", "=" * 50, "\n")
+        print()
+        print("=" * 80, "\n")
         submenu()
  
 
@@ -303,7 +328,7 @@ def tool(option):
             networks[list(sorted_networks)[x+1]]['broadcast_ip'] = network_n.broadcast_address
         sorted_networks = dict(sorted(networks.items(), reverse=True, key=lambda item: item[1]['needed_hosts']))
         counter = -1
-        resultHeader()
+        print("=" * 80)
         while counter < n_networks - 1: 
             print(dedent(f"""
                 Network {counter+2} ({networks[list(sorted_networks)[counter+1]]['needed_hosts']} hosts)
@@ -315,7 +340,8 @@ def tool(option):
                 - Broadcast IP: {networks[list(sorted_networks)[counter+1]]['broadcast_ip']}
                 - Total Usable IPs: {networks[list(sorted_networks)[counter+1]]['hosts']}"""))
             counter += 1
-        print("=" * 50, "\n")
+        print()
+        print("=" * 80, "\n")
         submenu()
 
 #######################
