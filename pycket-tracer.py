@@ -159,14 +159,40 @@ def tool(option):
                     print()
                     break
                 else:
-                    if ipaddress.IPv4Address(ip).is_private is True:
+                    if ipaddress.IPv4Address(ip) > ipaddress.IPv4Address('0.0.0.0') and ipaddress.IPv4Address(ip) < ipaddress.IPv4Address('127.255.255.255'):
+                        ip_class = str("Class A")
+                    elif ipaddress.IPv4Address(ip) > ipaddress.IPv4Address('128.0.0.0') and ipaddress.IPv4Address(ip) < ipaddress.IPv4Address('191.255.255.255'):
+                        ip_class = str("Class B")
+                    elif ipaddress.IPv4Address(ip) > ipaddress.IPv4Address('192.0.0.0') and ipaddress.IPv4Address(ip) < ipaddress.IPv4Address('223.255.255.255'):
+                        ip_class = str("Class C")
+                    if ipaddress.IPv4Address(ip).is_reserved is True:
                         resultHeader()
-                        print(f"The IP '{ip}' is private")
+                        print(f"The IP '{ip}' is reserved (Class E)")
+                        print("=" * 50, "\n")
+                        break
+                    elif ipaddress.IPv4Address(ip).is_link_local is True:
+                        resultHeader()
+                        print(f"The IP '{ip}' is link local")
+                        print("=" * 50, "\n")
+                        break
+                    elif ipaddress.IPv4Address(ip).is_loopback is True:
+                        resultHeader()
+                        print(f"The IP '{ip}' is loopback")
+                        print("=" * 50, "\n")
+                        break
+                    elif ipaddress.IPv4Address(ip).is_multicast is True:
+                        resultHeader()
+                        print(f"The IP '{ip}' is multicast (Class D)")
+                        print("=" * 50, "\n")
+                        break
+                    elif ipaddress.IPv4Address(ip).is_private is True:
+                        resultHeader()
+                        print(f"The IP '{ip}' is private ({ip_class})")
                         print("=" * 50, "\n")
                         break
                     else:
                         resultHeader()
-                        print(f"The IP '{ip}' is public")
+                        print(f"The IP '{ip}' is public ({ip_class})")
                         print("=" * 50, "\n")
                         break
             except ValueError:
@@ -329,6 +355,5 @@ def defaultBinaryIP():
         randIP.append(str(random.randrange(0,2)))
     randIP = "".join(randIP)
     return f"{randIP[0:9]}.{randIP[9:17]}.{randIP[17:25]}.{randIP[25:33]}"
-
 
 menu()
