@@ -8,9 +8,10 @@
 </h1>
 
 <h4 align="center">Python Module (25H) • Final Project</h4>
-<br><br>
+<br>
 
-Final project for a Python Module (25H) within a Networking and Cyber Security course
+Final project for a Python Module (25H) within a Networking and Cyber Security course<br>
+<br>
 The repository has 2 Python files:
 * [Pycket Tracer Tools](https://github.com/luismco/pycket-tracer/blob/main/pycket-tracer.py)
   - Full Netwoking Tools
@@ -20,9 +21,9 @@ The repository has 2 Python files:
   - User Accounts and Administration (Required for the project)
   - Portuguese
 
-The project file is not intended for general use.<br>
+The project file is not intended for general use<br>
 <br>
-If you intend to test the networking tools, please use [Pycket Tracer Tools](https://github.com/luismco/pycket-tracer/blob/main/pycket-tracer.py) since it can be used without any user account and it has a more complete tool set available.
+If you intend to test the networking tools, please use [Pycket Tracer Tools](https://github.com/luismco/pycket-tracer/blob/main/pycket-tracer.py) since it can be used without any user account and it has a more complete tool set available
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
