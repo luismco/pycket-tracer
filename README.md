@@ -32,7 +32,7 @@ If you intend to test the networking tools, please use [Pycket Tracer Tools](htt
 </p>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/luismco/pycket-tracer/refs/heads/main/images/screenshot.png" alt="screenshot">
+<img src="https://raw.githubusercontent.com/luismco/pycket-tracer/refs/heads/main/images/screenshot.png" alt="screenshot" width="300">
 <p/>
 
 ## Key Features
