@@ -15,11 +15,11 @@ Final project for a Python Module (25H) within a Networking and Cyber Security c
 The repository has 2 Python files:
 * [Pycket Tracer Tools](https://github.com/luismco/pycket-tracer/blob/main/pycket-tracer.py)
   - Full Netwoking Tools
-  - English
+  - Language: English
 * [Project](https://github.com/luismco/pycket-tracer/blob/main/project.py)
   - Basic Networking Tools
   - User Accounts and Administration (Required for the project)
-  - Portuguese
+  - Language: Portuguese
 
 The project file is not intended for general use<br>
 <br>
