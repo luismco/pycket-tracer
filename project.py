@@ -36,14 +36,13 @@ current_user = None
 
 def logo():
     print("=" * 62)
-    print(dedent(f"""
+    print(dedent(f"""\
  ____             _        _     _____                        
 |  _ \ _   _  ___| | _____| |_  |_   _| __ __ _  ___ ___ _ __ 
 | |_) | | | |/ __| |/ / _ \ __|   | || '__/ _` |/ __/ _ \ '__|
 |  __/| |_| | (__|   <  __/ |_    | || | | (_| | (_|  __/ |   
 |_|    \__, |\___|_|\_\___|\__|   |_||_|  \__,_|\___\___|_|   
-       |___/                                                  
-    """))
+       |___/                                                  """))
 
 #########################
 ### Menus and Headers ###
@@ -81,10 +80,8 @@ def menu():
         print("\033c", end="")
         global option
         global current_user
-        print(dedent(f"""
-            {"=" * 62}
-            Pycket Tracer Tools
-            {"=" * 62}"""))
+        logo()
+        print("=" * 62)
         if database[current_user]['role'] == 'admin':
             print()
             print(*tools,sep="\n")
