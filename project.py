@@ -58,9 +58,11 @@ def mainHeader():
         Diogo Fontes | Luís Oliveira
         {"=" * 62}
 
-        1. Login
-        2. Registar Utilizador
-        """))
+        {"  1. Login"}
+        {"  2. Registar Utilizador"}
+
+        {"=" * 62}
+    """))
     while True:
         try:
             main_option = input("Selecione a opção desejada (Clique enter para sair): ")
@@ -116,7 +118,7 @@ def menu():
 def submenu():
     print(dedent(f"""\
         1. Voltar ao menu principal
-        0. Sair     
+        0. Sair
         """))
     while True:
         try:
@@ -137,14 +139,17 @@ def administration():
     print("\033c", end="")
     print(dedent(f"""
         {"=" * 62}
+        \033[1;32m{"Pycket Tracer Tools"}\033[0m
         Administração de Utilizadores
         {"=" * 62}
-        1. Registar Utilizador
-        2. Remover Utilizador
-        3. Listar Utilizadores
-        4. Alterar Passwords
-        5. Alterar Permissões
-        """))
+
+        {"  1. Registar Utilizador"}
+        {"  2. Remover Utilizador"}
+        {"  3. Listar Utilizadores"}
+        {"  4. Alterar Passwords"}
+        {"  5. Alterar Permissões"}
+        
+        {"=" * 62}"""))
     while True:
         try:
             admin_option = input("Selecione a opção desejada (Clique enter para voltar ao menu principal): ")
