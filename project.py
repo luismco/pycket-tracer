@@ -372,19 +372,14 @@ def password_get():
                         *** Requisitos de Password ***
                         A password deve conter letras minúsculas, maiúsculas, números e caracteres especias ({special})
                         """))
-    password = password.encode()
-    sha256 = hashlib.sha256()
-    sha256.update(password)
-    hashed_password = sha256.hexdigest()
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
 def password_check():
     max_attempts = 3
     attempts = 0
     while attempts < max_attempts:
-        password_input = getpass.getpass().encode()
-        sha256 = hashlib.sha256()
-        sha256.update(password_input)
-        hashed_input_password = sha256.hexdigest()
+        password_input = getpass.getpass()
+        hashed_input_password = hashlib.sha256(password_input.encode()).hexdigest()
         if database[username_input]['password'] == hashed_input_password:
             break
         else:
