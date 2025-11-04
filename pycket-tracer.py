@@ -47,10 +47,10 @@ def menu():
                 print("Valid options: 1 to 6")
 
 def submenu():
-    print(dedent(f"""\
-        1. Main Menu
-        0. Exit    
-        """))
+    print(f"""\
+    1. Main Menu
+    0. Exit
+    """)
     while True:
         try:
             sub_option = input("Select option (Enter to continue on current tool): ")

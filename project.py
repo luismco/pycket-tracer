@@ -116,10 +116,10 @@ def menu():
                 print("Insira apenas opções mostradas")
 
 def submenu():
-    print(dedent(f"""\
-        1. Voltar ao menu principal
-        0. Sair
-        """))
+    print(f"""\
+    1. Voltar ao menu principal
+    0. Sair
+    """)
     while True:
         try:
             sub_option = input("Selecione a opção desejada (Clique enter para continuar na ferramenta atual): ")
