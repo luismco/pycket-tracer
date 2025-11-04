@@ -4,6 +4,7 @@ from textwrap import dedent
 import hashlib
 import getpass
 import string
+import math
 
 lowercase = string.ascii_lowercase
 uppercase = string.ascii_uppercase
@@ -24,7 +25,7 @@ tools = [
     "   5. Subnetting",
     "   6. VLSM",
     "",
-    "=" * 60,
+    "=" * 62,
     "",
     "   7. Alterar Password",
     "   8. Administração de Utilizadores",
@@ -33,17 +34,29 @@ tools = [
 
 current_user = None
 
+def logo():
+    print("=" * 62)
+    print(dedent(f"""
+ ____             _        _     _____                        
+|  _ \ _   _  ___| | _____| |_  |_   _| __ __ _  ___ ___ _ __ 
+| |_) | | | |/ __| |/ / _ \ __|   | || '__/ _` |/ __/ _ \ '__|
+|  __/| |_| | (__|   <  __/ |_    | || | | (_| | (_|  __/ |   
+|_|    \__, |\___|_|\_\___|\__|   |_||_|  \__,_|\___\___|_|   
+       |___/                                                  
+    """))
+
 #########################
 ### Menus and Headers ###
 #########################
 def mainHeader():
     print("\033c", end="")
+    logo()
     print(dedent(f"""\
-        {"=" * 60}
-        Projeto Final Python
-        \033[32m{"Pycket Tracer"}\033[0m - Ferramenta de Apoio a Networking
+        {"=" * 62}
+        \033[1m{"Projeto Final Python"}\033[0m
+        \033[1;32m{"Pycket Tracer Tools"}\033[0m - Ferramenta de Apoio a Networking
         Diogo Fontes | Luís Oliveira
-        {"=" * 60}
+        {"=" * 62}
 
         1. Login
         2. Registar Utilizador
@@ -67,19 +80,19 @@ def menu():
         global option
         global current_user
         print(dedent(f"""
-            {"=" * 60}
+            {"=" * 62}
             Pycket Tracer Tools
-            {"=" * 60}"""))
+            {"=" * 62}"""))
         if database[current_user]['role'] == 'admin':
             print()
             print(*tools,sep="\n")
             print(dedent(f"""\
-                {"=" * 60}
+                {"=" * 62}
                 Utilizador atual: \033[4;36m{current_user.capitalize()}\033[0m (Clique enter para terminar sessão)"""))
         else:
             print(*tools[:-1],sep="\n")
             print(dedent(f"""\
-                {"=" * 60}
+                {"=" * 62}
                 Utilizador atual: \033[4;36m{current_user.capitalize()}\033[0m (Clique enter para terminar sessão)"""))
         while True:
             try:
@@ -123,9 +136,9 @@ def administration():
     global admin_option
     print("\033c", end="")
     print(dedent(f"""
-        {"=" * 60}
+        {"=" * 62}
         Administração de Utilizadores
-        {"=" * 60}
+        {"=" * 62}
         1. Registar Utilizador
         2. Remover Utilizador
         3. Listar Utilizadores
@@ -144,9 +157,9 @@ def administration():
             elif int(admin_option) == 3:
                 print("\033c", end="")
                 print(dedent(f"""
-                    {"=" * 60}
+                    {"=" * 62}
                     Lista de Utilizadores
-                    {"=" * 60}
+                    {"=" * 62}
                     {list(database.keys())}"""))
                 print(f"\nClique enter para voltar ao menu anterior")
                 getpass.getpass(prompt="")
@@ -162,15 +175,15 @@ def administration():
 
 def resultHeaderFooter():
     print()
-    print("=" * 60, "\n")
+    print("=" * 62, "\n")
 
 def toolHeader():
     toolTitle = tools[int(option)-1]
     print(dedent(f"""
-        {"=" * 60}
-        Pycket Tracer Tools
-        {toolTitle[3:]}
-        {"=" * 60}
+        {"=" * 62}
+        \033[1;32m{"Pycket Tracer Tools"}\033[0m
+        {toolTitle[6:]}
+        {"=" * 62}
         """))
 
 ######################
@@ -180,9 +193,9 @@ def login():
     print("\033c", end="")
     global username_input
     print(dedent(f"""
-        {"=" * 60}
+        {"=" * 62}
         Login
-        {"=" * 60}
+        {"=" * 62}
     """))
     while True:
         username_input = input("Utilizador: ")
@@ -201,9 +214,9 @@ def login():
 def signin():
     print("\033c", end="")
     print(dedent(f"""
-        {"=" * 60}
+        {"=" * 62}
         Registar Novo Utilizador
-        {"=" * 60}
+        {"=" * 62}
     """))
     while True:          
         username_input = input("Utilizador: ")
@@ -241,9 +254,9 @@ def signin():
 def removeUser():
     print("\033c", end="")
     print(dedent(f"""
-        {"=" * 60}
+        {"=" * 62}
         Remover Utilizador
-        {"=" * 60}"""))
+        {"=" * 62}"""))
     while True:
         username_input = input("Utilizador a remover: ")
         if username_input == "":
@@ -277,9 +290,9 @@ def removeUser():
 def changePasswordAdmin():
     print("\033c", end="")
     print(dedent(f"""
-        {"=" * 60}
+        {"=" * 62}
         Alteração de Password
-        {"=" * 60}"""))
+        {"=" * 62}"""))
     while True:
         username_input = input("Alterar password para o utilizador: ")
         if username_input == "":
@@ -299,9 +312,9 @@ def changePasswordAdmin():
 def changePassword():
     print("\033c", end="")
     print(dedent(f"""
-        {"=" * 60}
+        {"=" * 62}
         Alteração de Password
-        {"=" * 60}"""))
+        {"=" * 62}"""))
     print("*** Password Atual ***")
     password_check()
     print("*** Nova Password ***")
@@ -315,9 +328,9 @@ def changePassword():
 def changeRole():
     print("\033c", end="")
     print(dedent(f"""
-        {"=" * 60}
+        {"=" * 62}
         Alteração de Permissões
-        {"=" * 60}"""))
+        {"=" * 62}"""))
     while True:
         username_input = input("Alterar permissões para o utilizador: ")
         if username_input == "":
@@ -402,22 +415,16 @@ def password_check():
             attempts += 1
             if attempts < max_attempts:
                 print(dedent(f"""
-                    {"=" * 60}
+                    {"=" * 62}
                     Password incorreta
                     Tentativas restantes: {max_attempts - attempts}
-                    {"=" * 60}
+                    {"=" * 62}
                     """))
             else:
                 print("Atingiu o número máximo de tentativas")
                 print("Clique enter para sair")
                 getpass.getpass(prompt="")
                 exit()
-
-def subnetting():
-    print("Subnetting")
-
-def vlsm():
-    print("VLSM")
 
 def decToBin():
     toolHeader()
@@ -545,6 +552,152 @@ def ipClass():
                     break
         except ValueError:
             print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
+    submenu()
+
+def subnetting():
+    toolHeader()
+    while True:
+        try:
+            n_networks = input("Número de redes a configurar: ")
+            if n_networks == "":
+                print()
+                submenu()
+            elif int(n_networks) < 2:
+                print("Insira apenas números inteiros maiores que 1")
+            else:
+                break
+        except ValueError:
+            print("Insira apenas números inteiros maiores que 1")
+    while True:
+        try:
+            network_ip = input("Insira o IPv4 da rede inicial (CIDR): ")
+            print()
+            network = ipaddress.ip_network(network_ip)
+            break
+        except (ValueError, UnboundLocalError):
+            print("Insira um IP de rede (CIDR) válido (Ex:. 10.0.0.0/8)")
+            print()
+    networks = {}
+    n_networks = int(n_networks)
+    bits_needed = math.ceil(math.log2(n_networks))
+    new_prefix = network.prefixlen + bits_needed
+    subnets = list(network.subnets(new_prefix=new_prefix))
+    for netw in range(int(n_networks)):
+        networks[f'network_{netw}'] = {
+            'network_ip': subnets[netw],
+            'network_mask': subnets[netw].netmask,
+            'cidr': subnets[netw].prefixlen,
+            'hosts': subnets[netw].num_addresses-2,
+            'first_ip': subnets[netw][1],
+            'last_ip': subnets[netw][-2],
+            'broadcast_ip': subnets[netw].broadcast_address
+        }
+        netw += 1
+    counter = 0
+    print("=" * 80)
+    while counter < n_networks: 
+        print(dedent(f"""
+            \033[4;36m{"Rede"} {counter+1}\033[0m
+            - CIDR: /{networks[list(networks)[counter]]['cidr']}
+            - Máscara de Rede: {networks[list(networks)[counter]]['network_mask']}
+            - IP da Rede: {networks[list(networks)[counter]]['network_ip']}
+            - Primeiro IP Disponível: {networks[list(networks)[counter]]['first_ip']}
+            - Último IP Disponível: {networks[list(networks)[counter]]['last_ip']}
+            - IP de Broadcast: {networks[list(networks)[counter]]['broadcast_ip']}
+            - Número Total de IPs: {networks[list(networks)[counter]]['hosts']}"""))
+        counter += 1
+    resultHeaderFooter()
+    submenu()
+
+def vlsm():
+    toolHeader()
+    while True:
+        try:
+            n_networks = input("Número de redes a configurar: ")
+            if n_networks == "":
+                print()
+                submenu()
+            elif int(n_networks) < 1:
+                print("Insira apenas números inteiros positivos")
+            else:
+                break
+        except ValueError:
+            print("Insira apenas números inteiros positivos")
+    networks = {}
+    n_networks = int(n_networks)
+    for netw in range(n_networks):
+        while True:
+            try:
+                network_input = int(input(f"Dispositivos necessários para a rede {netw+1}: "))
+                if network_input < 1:
+                    print("Insira apenas números inteiros positivos")
+                else:
+                    networks[f'network_{netw}'] = {
+                        'needed_hosts': network_input,
+                        'needed_ips': network_input + 2,
+                        'network_mask': None,
+                        'cidr': None,
+                        'hosts': None,
+                        'network_ip': None,
+                        'first_ip': None,
+                        'last_ip': None,
+                        'broadcast_ip': None
+                    }
+                    break
+            except ValueError:
+                print("Insira apenas números inteiros positivos")
+    counter = 0
+    while counter < n_networks:
+        cidr = 0
+        bits = 0
+        totalHosts = networks[f'network_{counter}']['needed_ips']
+        while (2 ** bits) < totalHosts:
+            bits += 1
+            cidr = (32 - bits)
+        networks[f'network_{counter}']['cidr'] = cidr
+        counter += 1
+    sorted_networks = dict(sorted(networks.items(), reverse=True, key=lambda item: item[1]['needed_hosts']))
+    while True:
+        try:
+            network0_ip = input("Insira o IPv4 da rede inicial: ")
+            print()
+            ip = ipaddress.IPv4Address(network0_ip)
+            network0 = ipaddress.ip_network(f"{ip}/{sorted_networks[list(sorted_networks)[0]]['cidr']}")
+            break
+        except (ValueError, UnboundLocalError):
+            print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
+            print()
+    networks[list(sorted_networks)[0]]['network_mask'] = network0.netmask
+    networks[list(sorted_networks)[0]]['hosts'] = (network0.num_addresses - 2)
+    networks[list(sorted_networks)[0]]['network_ip'] = network0.network_address
+    networks[list(sorted_networks)[0]]['first_ip'] = network0[1]
+    networks[list(sorted_networks)[0]]['last_ip'] = network0[-2]
+    networks[list(sorted_networks)[0]]['broadcast_ip'] = network0.broadcast_address
+    for x in range(n_networks - 1):
+        network_ip = (sorted_networks[list(sorted_networks)[x]]['broadcast_ip'])+1
+        network_n = ipaddress.ip_network(f"{network_ip}/{sorted_networks[list(sorted_networks)[x+1]]['cidr']}")
+        networks[list(sorted_networks)[x+1]]['network_mask'] = network_n.netmask
+        networks[list(sorted_networks)[x+1]]['hosts'] = (network_n.num_addresses - 2)
+        networks[list(sorted_networks)[x+1]]['network_ip'] = network_n.network_address
+        networks[list(sorted_networks)[x+1]]['first_ip'] = network_n[1]
+        networks[list(sorted_networks)[x+1]]['last_ip'] = network_n[-2]
+        networks[list(sorted_networks)[x+1]]['broadcast_ip'] = network_n.broadcast_address
+    sorted_networks = dict(sorted(networks.items(), reverse=True, key=lambda item: item[1]['needed_hosts']))
+    counter = -1
+    print("=" * 80)
+    while counter < n_networks - 1: 
+        print(dedent(f"""
+            \033[4;36m{"Rede"} {counter+2}\033[0m ({networks[list(sorted_networks)[counter+1]]['needed_hosts']} dispositivos)
+            - CIDR: /{networks[list(sorted_networks)[counter+1]]['cidr']}
+            - Máscara de Rede: {networks[list(sorted_networks)[counter+1]]['network_mask']}
+            - Rede de IP: {networks[list(sorted_networks)[counter+1]]['network_ip']}
+            - Primeiro IP Disponível: {networks[list(sorted_networks)[counter+1]]['first_ip']}
+            - Último IP Disponível: {networks[list(sorted_networks)[counter+1]]['last_ip']}
+            - IP de Broadcast: {networks[list(sorted_networks)[counter+1]]['broadcast_ip']}
+            - Número Total de IPs Disponíveis: {networks[list(sorted_networks)[counter+1]]['hosts']}
+        """))
+        counter += 1
+    print("=" * 80, "\n")
     submenu()
 
 def tool(option):
