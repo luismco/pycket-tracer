@@ -594,7 +594,7 @@ def subnetting():
         }
         netw += 1
     counter = 0
-    print("=" * 80)
+    print("=" * 62)
     while counter < n_networks: 
         print(dedent(f"""
             \033[4;36m{"Rede"} {counter+1}\033[0m
@@ -684,7 +684,7 @@ def vlsm():
         networks[list(sorted_networks)[x+1]]['broadcast_ip'] = network_n.broadcast_address
     sorted_networks = dict(sorted(networks.items(), reverse=True, key=lambda item: item[1]['needed_hosts']))
     counter = -1
-    print("=" * 80)
+    print("=" * 62)
     while counter < n_networks - 1: 
         print(dedent(f"""
             \033[4;36m{"Rede"} {counter+2}\033[0m ({networks[list(sorted_networks)[counter+1]]['needed_hosts']} dispositivos)
@@ -697,7 +697,7 @@ def vlsm():
             - Número Total de IPs Disponíveis: {networks[list(sorted_networks)[counter+1]]['hosts']}
         """))
         counter += 1
-    print("=" * 80, "\n")
+    print("=" * 62, "\n")
     submenu()
 
 def tool(option):
