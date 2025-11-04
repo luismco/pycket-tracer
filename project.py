@@ -17,15 +17,18 @@ database = {
 }
 
 tools = [
-    "1. Conversão de IP (Decimal para Binário)", 
-    "2. Conversão de IP (Binário para Decimal)", 
-    "3. Cálculo da Máscara de Rede/CIDR", 
-    "4. Classicação de IPs (Privado vs Público)",
-    "5. Subnetting",
-    "6. VLSM",
+    "   1. Conversão de IP (Decimal para Binário)", 
+    "   2. Conversão de IP (Binário para Decimal)", 
+    "   3. Cálculo da Máscara de Rede/CIDR", 
+    "   4. Classicação de IPs (Privado vs Público)",
+    "   5. Subnetting",
+    "   6. VLSM",
+    "",
     "=" * 60,
-    "7. Alterar Password",
-    "8. Administração de Utilizadores",
+    "",
+    "   7. Alterar Password",
+    "   8. Administração de Utilizadores",
+    ""
 ]
 
 current_user = None
@@ -38,9 +41,10 @@ def mainHeader():
     print(dedent(f"""\
         {"=" * 60}
         Projeto Final Python
-        Pycket Tracer - Ferramenta de Apoio a Networking
+        \033[32m{"Pycket Tracer"}\033[0m - Ferramenta de Apoio a Networking
         Diogo Fontes | Luís Oliveira
         {"=" * 60}
+
         1. Login
         2. Registar Utilizador
         """))
@@ -67,15 +71,16 @@ def menu():
             Pycket Tracer Tools
             {"=" * 60}"""))
         if database[current_user]['role'] == 'admin':
+            print()
             print(*tools,sep="\n")
             print(dedent(f"""\
                 {"=" * 60}
-                Utilizador atual: \033[4;34m{current_user.capitalize()}\033[0m (Clique enter para terminar sessão)"""))
+                Utilizador atual: \033[4;36m{current_user.capitalize()}\033[0m (Clique enter para terminar sessão)"""))
         else:
             print(*tools[:-1],sep="\n")
             print(dedent(f"""\
                 {"=" * 60}
-                Utilizador atual: {current_user.capitalize()} (Clique enter para terminar sessão)"""))
+                Utilizador atual: \033[4;36m{current_user.capitalize()}\033[0m (Clique enter para terminar sessão)"""))
         while True:
             try:
                 option = input("\nSelecione a ferramenta desejada: ")
@@ -155,10 +160,9 @@ def administration():
         except ValueError:
             print("Insira apenas opções entre 1 e 4")
 
-def resultHeader():
-    print(dedent(f"""
-        {"=" * 60}
-        *** Resultado ***"""))
+def resultHeaderFooter():
+    print()
+    print("=" * 60, "\n")
 
 def toolHeader():
     toolTitle = tools[int(option)-1]
@@ -178,7 +182,8 @@ def login():
     print(dedent(f"""
         {"=" * 60}
         Login
-        {"=" * 60}"""))
+        {"=" * 60}
+    """))
     while True:
         username_input = input("Utilizador: ")
         if username_input == "":
@@ -198,7 +203,8 @@ def signin():
     print(dedent(f"""
         {"=" * 60}
         Registar Novo Utilizador
-        {"=" * 60}"""))
+        {"=" * 60}
+    """))
     while True:          
         username_input = input("Utilizador: ")
         if username_input == "":
@@ -413,108 +419,144 @@ def subnetting():
 def vlsm():
     print("VLSM")
 
+def decToBin():
+    toolHeader()
+    while True:
+        try:
+            decimalIP = input("Insira um endereço de IPv4 em formato decimal: ")
+            if decimalIP == "":
+                print()
+                break
+            else:
+                ip = ('{:b}'.format(ipaddress.IPv4Address(decimalIP)))
+                resultHeaderFooter()
+                print(f"IP em formato binário: {ip[0:9]}.{ip[9:17]}.{ip[17:25]}.{ip[25:33]}")
+                resultHeaderFooter()
+                break
+        except ValueError:
+            print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
+    submenu()
+
+def binToDec():
+    toolHeader()
+    while True:
+        try:
+            binaryIP = input("Insira um endereço de IPv4 em formato binário: ")
+            if binaryIP == "":
+                print()
+                break
+            else:
+                binaryIP = binaryIP.replace(".", "")
+                if len(binaryIP) == 32:
+                    binaryIP = int(binaryIP, 2)
+                    ip = ipaddress.IPv4Address(binaryIP)
+                    resultHeaderFooter()
+                    print(f"IP em formato decimal: {ip}")
+                    resultHeaderFooter()
+                    break
+                else:
+                    print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
+        except ValueError:
+            print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
+    submenu()
+
+def subnetCIDR():
+    toolHeader()
+    while True:
+        try:
+            hosts = input("Insira o número de dispositivos necessários: ")
+            if hosts == "":
+                print()
+                submenu()
+            else:
+                hosts = int(hosts)
+                break
+        except ValueError:
+            print("Insira apenas números inteiros")
+    totalHosts = hosts + 2
+    bits = 0
+    while (2 ** bits) < totalHosts:
+        bits += 1
+        cidr = 32 - bits
+    while True:
+        try:
+            decimalIP = input("Insira o IPv4 da rede: ")
+            ip = ipaddress.IPv4Address(decimalIP)
+            network = ipaddress.ip_network(f"{ip}/{cidr}")
+            resultHeaderFooter()
+            print(dedent(f"""\
+                - Máscara de Rede Adequeada: {network.netmask}
+                - CIDR adequado: /{cidr}
+                - Número de IPs disponíveis: {network.num_addresses - 2}
+                - IP da rede: {network.network_address}
+                - Primero IP Disponível: {ipaddress.IPv4Network(network)[1]}
+                - Último IP Disponível: {ipaddress.IPv4Network(network)[-2]}
+                - IP de Broadcast: {network.broadcast_address}"""))
+            resultHeaderFooter()
+            break
+        except (ValueError, UnboundLocalError):
+            print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
+    submenu()
+
+def ipClass():
+    toolHeader()
+    while True:
+        try:
+            ip = input("Insira um endereço de IPv4 (Decimal): ")
+            if ip == "":
+                print()
+                break
+            else:
+                if ipaddress.IPv4Address(ip) > ipaddress.IPv4Address('0.0.0.0') and ipaddress.IPv4Address(ip) < ipaddress.IPv4Address('127.255.255.255'):
+                    ip_class = str("Classe A")
+                elif ipaddress.IPv4Address(ip) > ipaddress.IPv4Address('128.0.0.0') and ipaddress.IPv4Address(ip) < ipaddress.IPv4Address('191.255.255.255'):
+                    ip_class = str("Classe B")
+                elif ipaddress.IPv4Address(ip) > ipaddress.IPv4Address('192.0.0.0') and ipaddress.IPv4Address(ip) < ipaddress.IPv4Address('223.255.255.255'):
+                    ip_class = str("Classe C")
+                if ipaddress.IPv4Address(ip).is_reserved is True:
+                    resultHeaderFooter()
+                    print(f"O IP '{ip}' é reservado (Classe E)")
+                    resultHeaderFooter()
+                    break
+                elif ipaddress.IPv4Address(ip).is_link_local is True:
+                    resultHeaderFooter()
+                    print(f"O IP '{ip}' é link local")
+                    resultHeaderFooter()
+                    break
+                elif ipaddress.IPv4Address(ip).is_loopback is True:
+                    resultHeaderFooter()
+                    print(f"O IP '{ip}' é loopback")
+                    resultHeaderFooter()
+                    break
+                elif ipaddress.IPv4Address(ip).is_multicast is True:
+                    resultHeaderFooter()
+                    print(f"The IP '{ip}' é multicast (Classe D)")
+                    resultHeaderFooter()
+                    break
+                elif ipaddress.IPv4Address(ip).is_private is True:
+                    resultHeaderFooter()
+                    print(f"O IP '{ip}' é privado ({ip_class})")
+                    resultHeaderFooter()
+                    break
+                else:
+                    resultHeaderFooter()
+                    print(f"O IP '{ip}' é público ({ip_class})")
+                    resultHeaderFooter()
+                    break
+        except ValueError:
+            print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
+    submenu()
+
 def tool(option):
     print("\033c", end="")
     if option == 1:
-        toolHeader()
-        while True:
-            try:
-                decimalIP = input("Insira um endereço de IPv4 em formato decimal: ")
-                if decimalIP == "":
-                    print()
-                    break
-                else:
-                    ip = ('{:b}'.format(ipaddress.IPv4Address(decimalIP)))
-                    resultHeader()
-                    print(f"IP em formato binário: {ip[0:9]}.{ip[9:17]}.{ip[17:25]}.{ip[25:33]}")
-                    print("=" * 60, "\n")
-                    break
-            except ValueError:
-                print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
-        submenu()
+        decToBin()
     elif option == 2:
-        toolHeader()
-        while True:
-            try:
-                binaryIP = input("Insira um endereço de IPv4 em formato binário: ")
-                if binaryIP == "":
-                    print()
-                    break
-                else:
-                    binaryIP = binaryIP.replace(".", "")
-                    if len(binaryIP) == 32:
-                        binaryIP = int(binaryIP, 2)
-                        ip = ipaddress.IPv4Address(binaryIP)
-                        resultHeader()
-                        print(f"IP em formato decimal: {ip}")
-                        print("=" * 60, "\n")
-                        break
-                    else:
-                        print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
-            except ValueError:
-                print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
-        submenu()
+        binToDec()
     elif option == 3:
-        toolHeader()
-        while True:
-            try:
-                hosts = input("Insira o número de dispositivos necessários: ")
-                if hosts == "":
-                    print()
-                    submenu()
-                else:
-                    hosts = int(hosts)
-                    break
-            except ValueError:
-                print("Insira apenas números inteiros")
-        totalHosts = hosts + 2
-        bits = 0
-        while (2 ** bits) < totalHosts:
-            bits += 1
-        cidr = 32 - bits
-        while True:
-            try:
-                decimalIP = input("Insira o IPv4 da rede: ")
-                ip = ipaddress.IPv4Address(decimalIP)
-                network = ipaddress.ip_network(f"{ip}/{cidr}")
-                print()
-                print("=" * 60)
-                print(dedent(f"""
-                    - Máscara de Rede Adequeada: {network.netmask}
-                    - CIDR adequado: /{cidr}
-                    - Número de IPs disponíveis: {network.num_addresses - 2}
-                    - IP da rede: {network.network_address}
-                    - Primero IP Disponível: {ipaddress.IPv4Network(network)[1]}
-                    - Último IP Disponível: {ipaddress.IPv4Network(network)[-2]}
-                    - IP de Broadcast: {network.broadcast_address}
-                """))
-                print("=" * 60, "\n")
-                break
-            except (ValueError, UnboundLocalError):
-                print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
-        submenu()
+        subnetCIDR()
     elif option == 4:
-        toolHeader()
-        while True:
-            try:
-                ip = input("Insira um endereço de IPv4: ")
-                if ip == "":
-                    print()
-                    break
-                else:
-                    if ipaddress.IPv4Address(ip).is_private is True:
-                        resultHeader()
-                        print(f"O IP '{ip}' é um IP Privado")
-                        print("=" * 60, "\n")
-                        break
-                    else:
-                        resultHeader()
-                        print(f"O IP '{ip}' é um IP Público")
-                        print("=" * 60, "\n")
-                        break
-            except ValueError:
-                print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
-        submenu()
+        ipClass()
     elif option == 5:
         subnetting()
     elif option == 6:
