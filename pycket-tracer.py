@@ -7,7 +7,7 @@ tools = [
     "1. IP Address Conversion (Binary to Decimal)", 
     "2. IP Address Conversion (Decimal to Binary)",
     "3. IP Classification", 
-    "4. Subnet Calculator", 
+    "4. Subnet/CIDR Calculator", 
     "5. Subnetting",
     "6. VLSM",
 ]

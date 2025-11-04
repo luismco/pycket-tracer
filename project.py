@@ -21,9 +21,11 @@ tools = [
     "2. Conversão de IP (Binário para Decimal)", 
     "3. Cálculo da Máscara de Rede/CIDR", 
     "4. Classicação de IPs (Privado vs Público)",
-    "5. Alterar Password",
-    "6. Terminar sessão",
-    "7. Administração de Utilizadores"
+    "5. Subnetting",
+    "6. VLSM",
+    "=" * 60,
+    "7. Alterar Password",
+    "8. Administração de Utilizadores",
 ]
 
 current_user = None
@@ -34,11 +36,11 @@ current_user = None
 def mainHeader():
     print("\033c", end="")
     print(dedent(f"""\
-        {"=" * 50}
+        {"=" * 60}
         Projeto Final Python
         Pycket Tracer - Ferramenta de Apoio a Networking
         Diogo Fontes | Luís Oliveira
-        {"=" * 50}
+        {"=" * 60}
         1. Login
         2. Registar Utilizador
         """))
@@ -59,29 +61,37 @@ def mainHeader():
 def menu():
         print("\033c", end="")
         global option
+        global current_user
         print(dedent(f"""
-            {"=" * 50}
+            {"=" * 60}
             Pycket Tracer Tools
-            {"=" * 50}"""))
+            {"=" * 60}"""))
         if database[current_user]['role'] == 'admin':
             print(*tools,sep="\n")
+            print(dedent(f"""\
+                {"=" * 60}
+                Utilizador atual: \033[4;34m{current_user.capitalize()}\033[0m (Clique enter para terminar sessão)"""))
         else:
             print(*tools[:-1],sep="\n")
+            print(dedent(f"""\
+                {"=" * 60}
+                Utilizador atual: {current_user.capitalize()} (Clique enter para terminar sessão)"""))
         while True:
             try:
-                option = input("\nSelecione a ferramenta desejada (Clique enter para sair): ")
+                option = input("\nSelecione a ferramenta desejada: ")
                 if option == "":
-                    exit()
+                    current_user = None
+                    mainHeader()
                 if database[current_user]['role'] == 'admin':
+                    if int(option) >= 1 and int(option) <= 8:
+                        tool(int(option))
+                    else:
+                        print("Insira apenas opções entre 1 e 8")
+                else:
                     if int(option) >= 1 and int(option) <= 7:
                         tool(int(option))
                     else:
                         print("Insira apenas opções entre 1 e 7")
-                else:
-                    if int(option) >= 1 and int(option) <= 6:
-                        tool(int(option))
-                    else:
-                        print("Insira apenas opções entre 1 e 6")
             except ValueError:
                 print("Insira apenas opções mostradas")
 
@@ -108,9 +118,9 @@ def administration():
     global admin_option
     print("\033c", end="")
     print(dedent(f"""
-        {"=" * 50}
+        {"=" * 60}
         Administração de Utilizadores
-        {"=" * 50}
+        {"=" * 60}
         1. Registar Utilizador
         2. Remover Utilizador
         3. Listar Utilizadores
@@ -129,9 +139,9 @@ def administration():
             elif int(admin_option) == 3:
                 print("\033c", end="")
                 print(dedent(f"""
-                    {"=" * 50}
+                    {"=" * 60}
                     Lista de Utilizadores
-                    {"=" * 50}
+                    {"=" * 60}
                     {list(database.keys())}"""))
                 print(f"\nClique enter para voltar ao menu anterior")
                 getpass.getpass(prompt="")
@@ -147,16 +157,16 @@ def administration():
 
 def resultHeader():
     print(dedent(f"""
-        {"=" * 50}
+        {"=" * 60}
         *** Resultado ***"""))
 
 def toolHeader():
     toolTitle = tools[int(option)-1]
     print(dedent(f"""
-        {"=" * 50}
+        {"=" * 60}
         Pycket Tracer Tools
         {toolTitle[3:]}
-        {"=" * 50}
+        {"=" * 60}
         """))
 
 ######################
@@ -166,9 +176,9 @@ def login():
     print("\033c", end="")
     global username_input
     print(dedent(f"""
-        {"=" * 50}
+        {"=" * 60}
         Login
-        {"=" * 50}"""))
+        {"=" * 60}"""))
     while True:
         username_input = input("Utilizador: ")
         if username_input == "":
@@ -186,9 +196,9 @@ def login():
 def signin():
     print("\033c", end="")
     print(dedent(f"""
-        {"=" * 50}
+        {"=" * 60}
         Registar Novo Utilizador
-        {"=" * 50}"""))
+        {"=" * 60}"""))
     while True:          
         username_input = input("Utilizador: ")
         if username_input == "":
@@ -225,9 +235,9 @@ def signin():
 def removeUser():
     print("\033c", end="")
     print(dedent(f"""
-        {"=" * 50}
+        {"=" * 60}
         Remover Utilizador
-        {"=" * 50}"""))
+        {"=" * 60}"""))
     while True:
         username_input = input("Utilizador a remover: ")
         if username_input == "":
@@ -261,9 +271,9 @@ def removeUser():
 def changePasswordAdmin():
     print("\033c", end="")
     print(dedent(f"""
-        {"=" * 50}
+        {"=" * 60}
         Alteração de Password
-        {"=" * 50}"""))
+        {"=" * 60}"""))
     while True:
         username_input = input("Alterar password para o utilizador: ")
         if username_input == "":
@@ -283,9 +293,9 @@ def changePasswordAdmin():
 def changePassword():
     print("\033c", end="")
     print(dedent(f"""
-        {"=" * 50}
+        {"=" * 60}
         Alteração de Password
-        {"=" * 50}"""))
+        {"=" * 60}"""))
     print("*** Password Atual ***")
     password_check()
     print("*** Nova Password ***")
@@ -299,9 +309,9 @@ def changePassword():
 def changeRole():
     print("\033c", end="")
     print(dedent(f"""
-        {"=" * 50}
+        {"=" * 60}
         Alteração de Permissões
-        {"=" * 50}"""))
+        {"=" * 60}"""))
     while True:
         username_input = input("Alterar permissões para o utilizador: ")
         if username_input == "":
@@ -386,16 +396,22 @@ def password_check():
             attempts += 1
             if attempts < max_attempts:
                 print(dedent(f"""
-                    {"=" * 50}
+                    {"=" * 60}
                     Password incorreta
                     Tentativas restantes: {max_attempts - attempts}
-                    {"=" * 50}
+                    {"=" * 60}
                     """))
             else:
                 print("Atingiu o número máximo de tentativas")
                 print("Clique enter para sair")
                 getpass.getpass(prompt="")
                 exit()
+
+def subnetting():
+    print("Subnetting")
+
+def vlsm():
+    print("VLSM")
 
 def tool(option):
     print("\033c", end="")
@@ -411,7 +427,7 @@ def tool(option):
                     ip = ('{:b}'.format(ipaddress.IPv4Address(decimalIP)))
                     resultHeader()
                     print(f"IP em formato binário: {ip[0:9]}.{ip[9:17]}.{ip[17:25]}.{ip[25:33]}")
-                    print("=" * 50, "\n")
+                    print("=" * 60, "\n")
                     break
             except ValueError:
                 print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
@@ -431,7 +447,7 @@ def tool(option):
                         ip = ipaddress.IPv4Address(binaryIP)
                         resultHeader()
                         print(f"IP em formato decimal: {ip}")
-                        print("=" * 50, "\n")
+                        print("=" * 60, "\n")
                         break
                     else:
                         print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
@@ -461,16 +477,18 @@ def tool(option):
                 decimalIP = input("Insira o IPv4 da rede: ")
                 ip = ipaddress.IPv4Address(decimalIP)
                 network = ipaddress.ip_network(f"{ip}/{cidr}")
-                resultHeader()
-                print(dedent(f"""\
-                Máscara de Rede Adequeada: {network.netmask}
-                CIDR adequado: /{cidr}
-                Número de IPs disponíveis: {network.num_addresses - 2}
-                IP da rede: {network.network_address}
-                Primero IP Disponível: {ipaddress.IPv4Network(network)[1]}
-                Último IP Disponível: {ipaddress.IPv4Network(network)[-2]}
-                IP de Broadcast: {network.broadcast_address}"""))
-                print("=" * 50, "\n")
+                print()
+                print("=" * 60)
+                print(dedent(f"""
+                    - Máscara de Rede Adequeada: {network.netmask}
+                    - CIDR adequado: /{cidr}
+                    - Número de IPs disponíveis: {network.num_addresses - 2}
+                    - IP da rede: {network.network_address}
+                    - Primero IP Disponível: {ipaddress.IPv4Network(network)[1]}
+                    - Último IP Disponível: {ipaddress.IPv4Network(network)[-2]}
+                    - IP de Broadcast: {network.broadcast_address}
+                """))
+                print("=" * 60, "\n")
                 break
             except (ValueError, UnboundLocalError):
                 print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
@@ -487,23 +505,23 @@ def tool(option):
                     if ipaddress.IPv4Address(ip).is_private is True:
                         resultHeader()
                         print(f"O IP '{ip}' é um IP Privado")
-                        print("=" * 50, "\n")
+                        print("=" * 60, "\n")
                         break
                     else:
                         resultHeader()
                         print(f"O IP '{ip}' é um IP Público")
-                        print("=" * 50, "\n")
+                        print("=" * 60, "\n")
                         break
             except ValueError:
                 print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
         submenu()
     elif option == 5:
-        changePassword()
+        subnetting()
     elif option == 6:
-        global current_user
-        current_user = None
-        mainHeader()
+        vlsm()
     elif option == 7:
+        changePassword()
+    elif option == 8:
         administration()
 
 #######################
