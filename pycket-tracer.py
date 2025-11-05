@@ -95,9 +95,9 @@ def tool(option):
     elif option == 2:
         binToDec()
     elif option == 3:
-        subnetCIDR()
-    elif option == 4:
         ipClass()
+    elif option == 4:
+        subnetCIDR()
     elif option == 5:
         subnetting()
     elif option == 6:
