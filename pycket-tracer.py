@@ -39,9 +39,10 @@ def menu():
         print(*tools,sep="\n")
         print()
         print("=" * 62)
+        print()
         while True:
             try:
-                option = input("\nSelect tool (Enter to exit): ")
+                option = input("Select tool (Enter to exit): ")
                 if option == "":
                     exit()
                 else:
@@ -153,6 +154,8 @@ def subnetCIDR():
                 submenu()
             else:
                 hosts = int(hosts)
+                if hosts >= 4294967294:
+                    print(f"{red}Number of possible hosts for IPv4 reached (4294967294), try a smaller network{normal}")
                 break
         except ValueError:
             print(f"{red}Enter integers only{normal}")
@@ -318,6 +321,10 @@ def vlsm():
                         'last_ip': None,
                         'broadcast_ip': None
                     }
+                hosts_sum = sum(d['needed_hosts'] for d in networks.values() if d)
+                if hosts_sum >= 4294967294:
+                    print(f"{red}Number of possible hosts for IPv4 reached (4294967294), try a smaller network{normal}")
+                else:
                     break
             except ValueError:
                 print(f"{red}Only positive integers allowed{normal}")

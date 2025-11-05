@@ -20,8 +20,8 @@ database = {
 tools = [
     "   1. Conversão de IP (Decimal para Binário)", 
     "   2. Conversão de IP (Binário para Decimal)", 
-    "   3. Cálculo da Máscara de Rede/CIDR", 
-    "   4. Classicação de IPs (Privado vs Público)",
+    "   3. Classicação de IPs (Privado vs Público)", 
+    "   4. Cálculo da Máscara de Rede/CIDR",
     "   5. Subnetting",
     "   6. VLSM",
     "",
@@ -488,7 +488,10 @@ def subnetCIDR():
                 submenu()
             else:
                 hosts = int(hosts)
-                break
+                if hosts <= 4294967294:
+                    break
+                else:
+                    print(f"{red}Atingiu o número máximo de dispositivos posíveis para endereços de IPv4 (4294967294){normal}")
         except ValueError:
             print(f"{red}Insira apenas números inteiros{normal}")
     totalHosts = hosts + 2
@@ -652,6 +655,10 @@ def vlsm():
                         'last_ip': None,
                         'broadcast_ip': None
                     }
+                hosts_sum = sum(d['needed_hosts'] for d in networks.values() if d)
+                if hosts_sum > 4294967294:
+                    print(f"{red}Atingiu o número máximo de dispositivos posíveis para endereços de IPv4 (4294967294){normal}")
+                else:
                     break
             except ValueError:
                 print(f"{red}Insira apenas números inteiros positivos{normal}")
@@ -714,9 +721,9 @@ def tool(option):
     elif option == 2:
         binToDec()
     elif option == 3:
-        subnetCIDR()
-    elif option == 4:
         ipClass()
+    elif option == 4:
+        subnetCIDR()
     elif option == 5:
         subnetting()
     elif option == 6:
