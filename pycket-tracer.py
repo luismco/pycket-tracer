@@ -154,9 +154,10 @@ def subnetCIDR():
                 submenu()
             else:
                 hosts = int(hosts)
-                if hosts >= 4294967294:
+                if hosts <= 4294967294:
+                    break
+                else:
                     print(f"{red}Number of possible hosts for IPv4 reached (4294967294), try a smaller network{normal}")
-                break
         except ValueError:
             print(f"{red}Enter integers only{normal}")
     totalHosts = hosts + 2
