@@ -28,8 +28,7 @@ tools = [
     "=" * 62,
     "",
     "   7. Alterar Password",
-    "   8. Administração de Utilizadores",
-    ""
+    "   8. Administração de Utilizadores"
 ]
 
 current_user = None
@@ -85,12 +84,13 @@ def menu():
         if database[current_user]['role'] == 'admin':
             print()
             print(*tools,sep="\n")
-            print(dedent(f"""\
+            print(dedent(f"""
                 {"=" * 62}
                 Utilizador atual: \033[4;36m{current_user.capitalize()}\033[0m (Clique enter para terminar sessão)"""))
         else:
+            print()
             print(*tools[:-1],sep="\n")
-            print(dedent(f"""\
+            print(dedent(f"""
                 {"=" * 62}
                 Utilizador atual: \033[4;36m{current_user.capitalize()}\033[0m (Clique enter para terminar sessão)"""))
         while True:
@@ -258,7 +258,8 @@ def removeUser():
     print(dedent(f"""
         {"=" * 62}
         Remover Utilizador
-        {"=" * 62}"""))
+        {"=" * 62}
+    """))
     while True:
         username_input = input("Utilizador a remover: ")
         if username_input == "":
@@ -294,7 +295,8 @@ def changePasswordAdmin():
     print(dedent(f"""
         {"=" * 62}
         Alteração de Password
-        {"=" * 62}"""))
+        {"=" * 62}
+    """))
     while True:
         username_input = input("Alterar password para o utilizador: ")
         if username_input == "":
@@ -316,7 +318,8 @@ def changePassword():
     print(dedent(f"""
         {"=" * 62}
         Alteração de Password
-        {"=" * 62}"""))
+        {"=" * 62}
+    """))
     print("*** Password Atual ***")
     password_check()
     print("*** Nova Password ***")
@@ -332,7 +335,8 @@ def changeRole():
     print(dedent(f"""
         {"=" * 62}
         Alteração de Permissões
-        {"=" * 62}"""))
+        {"=" * 62}
+    """))
     while True:
         username_input = input("Alterar permissões para o utilizador: ")
         if username_input == "":
