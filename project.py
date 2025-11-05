@@ -31,6 +31,12 @@ tools = [
     "   8. Administração de Utilizadores"
 ]
 
+red = "\033[31m"
+cyan_underline = "\033[4;36m"
+green_bold = "\033[1;32m"
+bold = "\033[1m"
+normal  = "\033[0m"
+
 current_user = None
 
 def logo():
@@ -51,8 +57,8 @@ def mainHeader():
     logo()
     print(dedent(f"""\
         {"=" * 62}
-        \033[1m{"Projeto Final Python"}\033[0m
-        \033[1;32m{"Pycket Tracer Tools"}\033[0m - Ferramenta de Apoio a Networking
+        {bold}Projeto Final Python{normal}
+        {green_bold}Pycket Tracer Tools{normal} - Ferramenta de Apoio a Networking
         Diogo Fontes | Luís Oliveira
         {"=" * 62}
 
@@ -71,9 +77,9 @@ def mainHeader():
             elif int(main_option) == 2:
                 signin()
             else:
-                print("Insira apenas opções entre 1 e 2")
+                print(f"{red}Insira apenas opções entre 1 e 2{normal}")
         except ValueError:
-            print("Insira apenas opções entre 1 e 2")
+            print(f"{red}Insira apenas opções entre 1 e 2{normal}")
 
 def menu():
         print("\033c", end="")
@@ -86,13 +92,13 @@ def menu():
             print(*tools,sep="\n")
             print(dedent(f"""
                 {"=" * 62}
-                Utilizador atual: \033[4;36m{current_user.capitalize()}\033[0m (Clique enter para terminar sessão)"""))
+                Utilizador atual: {cyan_underline}{current_user.capitalize()}{normal} (Clique enter para terminar sessão)"""))
         else:
             print()
             print(*tools[:-1],sep="\n")
             print(dedent(f"""
                 {"=" * 62}
-                Utilizador atual: \033[4;36m{current_user.capitalize()}\033[0m (Clique enter para terminar sessão)"""))
+                Utilizador atual: {cyan_underline}{current_user.capitalize()}{normal} (Clique enter para terminar sessão)"""))
         while True:
             try:
                 option = input("\nSelecione a ferramenta desejada: ")
@@ -103,14 +109,14 @@ def menu():
                     if int(option) >= 1 and int(option) <= 8:
                         tool(int(option))
                     else:
-                        print("Insira apenas opções entre 1 e 8")
+                        print(f"{red}Insira apenas opções entre 1 e 8{normal}")
                 else:
                     if int(option) >= 1 and int(option) <= 7:
                         tool(int(option))
                     else:
-                        print("Insira apenas opções entre 1 e 7")
+                        print(f"{red}Insira apenas opções entre 1 e 7{normal}")
             except ValueError:
-                print("Insira apenas opções mostradas")
+                print(f"{red}Insira apenas opções númericas{normal}")
 
 def submenu():
     print(f"""\
@@ -127,16 +133,16 @@ def submenu():
             elif int(sub_option) == 0:
                 exit()
             else:
-                print("Insira apenas opções entre 0 e 1")
+                print(f"{red}Insira apenas opções entre 0 e 1{normal}")
         except ValueError:
-            print("Insira apenas opções entre 0 e 1")
+            print(f"{red}Insira apenas opções entre 0 e 1{normal}")
 
 def administration():
     global admin_option
     print("\033c", end="")
     print(dedent(f"""
         {"=" * 62}
-        \033[1;32m{"Pycket Tracer Tools"}\033[0m
+        {green_bold}{"Pycket Tracer Tools"}{normal}
         Administração de Utilizadores
         {"=" * 62}
 
@@ -171,9 +177,9 @@ def administration():
             elif int(admin_option) == 5:
                 changeRole()
             else:
-                print("Insira apenas opções entre 1 e 4")
+                print(f"{red}Insira apenas opções entre 1 e 5{normal}")
         except ValueError:
-            print("Insira apenas opções entre 1 e 4")
+            print(f"{red}Insira apenas opções entre 1 e 5{normal}")
 
 def resultHeaderFooter():
     print()
@@ -183,7 +189,7 @@ def toolHeader():
     toolTitle = tools[int(option)-1]
     print(dedent(f"""
         {"=" * 62}
-        \033[1;32m{"Pycket Tracer Tools"}\033[0m
+        {green_bold}{"Pycket Tracer Tools"}{normal}
         {toolTitle[6:]}
         {"=" * 62}
         """))
@@ -206,9 +212,8 @@ def login():
         elif username_input in database:
             break
         else:
-            print("Utilizador não encontrado")
+            print(f"{red}Utilizador não encontrado{normal}")
     password_check()
-    print(f"\nBem vindo, {username_input.capitalize()}!")
     global current_user
     current_user = username_input
     menu()
@@ -228,7 +233,7 @@ def signin():
             else:
                 administration()
         elif len(username_input) < 3:
-            print("Insira pelo menos 3 caracteres")
+            print(f"{red}Insira pelo menos 3 caracteres{normal}")
         else:
             break
     if username_input not in database:
@@ -237,7 +242,7 @@ def signin():
             'password': hashed_password,
             'role':'user'
             }
-        print(f"\nLogin para o utilizador '{username_input}' criado com sucesso!")
+        print(f"\n{green_bold}Login para o utilizador '{username_input}' criado com sucesso!{normal}")
         print("\nClique enter para voltar ao menu anterior")
         getpass.getpass(prompt="")
         if current_user is None:
@@ -245,7 +250,7 @@ def signin():
         else:
             administration()
     else:
-        print(f"O utilizador {username_input} já existe")
+        print(f"{red}O utilizador {username_input} já existe{normal}")
         print("\nClique enter para voltar ao menu anterior")
         getpass.getpass(prompt="")
         if current_user is None:
@@ -265,7 +270,7 @@ def removeUser():
         if username_input == "":
            administration()
         elif username_input == current_user:
-            print("Não pode eliminar o utilizador atual")
+            print(f"{red}Não pode eliminar o utilizador atual{normal}")
         elif username_input in database:
             while True:
                 try:
@@ -277,18 +282,18 @@ def removeUser():
                     Selecione a opção desejada: """))
                     if int(remove_confirm) == 1:
                         database.pop(username_input)
-                        print(f"\nUtilizador '{username_input}' removido com sucesso!")
+                        print(f"\n{green_bold}Utilizador '{username_input}' removido com sucesso!{normal}")
                         print("\nClique enter para voltar ao menu anterior")
                         getpass.getpass(prompt="")
                         administration()
                     elif int(remove_confirm) == 2:
                         administration()
                     else:
-                        print("Insira apenas opções entre 1 e 2")
+                        print(f"{red}Insira apenas opções entre 1 e 2{normal}")
                 except ValueError:
-                    print("Insira apenas opções entre 1 e 2")             
+                    print(f"{red}Insira apenas opções entre 1 e 2{normal}")             
         else:
-            print("Utilizador não encontrado")
+            print(f"{red}Utilizador não encontrado{normal}")
 
 def changePasswordAdmin():
     print("\033c", end="")
@@ -304,11 +309,11 @@ def changePasswordAdmin():
         elif username_input in database:
             break
         else:
-            print("Utilizador não encontrado")
+            print(f"{red}Utilizador não encontrado{normal}")
     print("*** Nova Password ***")
     password_get()
     database[username_input]['password'] = hashed_password
-    print(f"\nA password do utilizador '{username_input}' foi atualizada com sucesso!")
+    print(f"\n{green_bold}A password do utilizador '{username_input}' foi atualizada com sucesso!{normal}")
     print("\nClique enter para voltar ao menu anterior")
     getpass.getpass(prompt="")
     administration()
@@ -325,7 +330,7 @@ def changePassword():
     print("*** Nova Password ***")
     password_get()
     database[current_user]['password'] = hashed_password
-    print(f"\nA sua password foi atualizada com sucesso!")
+    print(f"\n{green_bold}A sua password foi atualizada com sucesso!{normal}")
     print("\nClique enter para voltar ao menu anterior")
     getpass.getpass(prompt="")
     menu()
@@ -343,11 +348,11 @@ def changeRole():
             administration()
         elif username_input in database:
             if username_input == current_user:
-                print("Não pode alterar as permissões do utilizador atual")
+                print(f"{red}Não pode alterar as permissões do utilizador atual{normal}")
             else:
                 break
         else:
-            print("Utilizador não encontrado")
+            print(f"{red}Utilizador não encontrado{normal}")
     current_role = database[username_input]['role']
     if current_role == 'admin':
         new_role = 'user'
@@ -365,7 +370,7 @@ def changeRole():
             role_option = input("Selecione a opção desejada: ")
             if int(role_option) == 1:
                 database[username_input]['role'] = new_role
-                print(f"\nAs permissões do utilizador '{username_input}' foram alteradas com sucesso!")
+                print(f"\n{green_bold}As permissões do utilizador '{username_input}' foram alteradas com sucesso!{normal}")
                 print("\nClique enter para voltar ao menu anterior")
                 getpass.getpass(prompt="")
                 break
@@ -375,9 +380,9 @@ def changeRole():
                 getpass.getpass(prompt="")
                 break
             else:
-                print("Insira apenas opções entre 1 e 2")
+                print(f"{red}Insira apenas opções entre 1 e 2{normal}")
         except ValueError:
-            print("Insira apenas opções entre 1 e 2")
+            print(f"{red}Insira apenas opções entre 1 e 2{normal}")
     administration()
 
 def password_get():
@@ -385,7 +390,7 @@ def password_get():
     while True:
             password = getpass.getpass()
             if len(password) < 8:
-                print("A password tem que ter um mínimo de 8 caracteres")
+                print(f"{red}A password tem que ter um mínimo de 8 caracteres{normal}")
             else:
                 lowercase_check = False
                 uppercase_check = False
@@ -422,12 +427,12 @@ def password_check():
             if attempts < max_attempts:
                 print(dedent(f"""
                     {"=" * 62}
-                    Password incorreta
+                    {red}Password incorreta{normal}
                     Tentativas restantes: {max_attempts - attempts}
                     {"=" * 62}
                     """))
             else:
-                print("Atingiu o número máximo de tentativas")
+                print(f"{red}Atingiu o número máximo de tentativas{normal}")
                 print("Clique enter para sair")
                 getpass.getpass(prompt="")
                 exit()
@@ -447,7 +452,7 @@ def decToBin():
                 resultHeaderFooter()
                 break
         except ValueError:
-            print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
+            print(f"{red}Insira um IPv4 válido{normal} (Ex.: '{defaultDecimalIP()}')")
     submenu()
 
 def binToDec():
@@ -468,9 +473,9 @@ def binToDec():
                     resultHeaderFooter()
                     break
                 else:
-                    print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
+                    print(f"{red}Insira um IPv4 válido{normal} (Ex.: '{defaultBinaryIP()}')")
         except ValueError:
-            print(f"Insira um IPv4 válido (Ex.: '{defaultBinaryIP()}')")
+            print(f"{red}Insira um IPv4 válido{normal} (Ex.: '{defaultBinaryIP()}')")
     submenu()
 
 def subnetCIDR():
@@ -485,7 +490,7 @@ def subnetCIDR():
                 hosts = int(hosts)
                 break
         except ValueError:
-            print("Insira apenas números inteiros")
+            print(f"{red}Insira apenas números inteiros{normal}")
     totalHosts = hosts + 2
     bits = 0
     while (2 ** bits) < totalHosts:
@@ -508,7 +513,7 @@ def subnetCIDR():
             resultHeaderFooter()
             break
         except (ValueError, UnboundLocalError):
-            print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
+            print(f"{red}Insira um IP de rede válido{normal} (Ex:. 10.0.0.0)")
     submenu()
 
 def ipClass():
@@ -557,7 +562,7 @@ def ipClass():
                     resultHeaderFooter()
                     break
         except ValueError:
-            print(f"Insira um IPv4 válido (Ex.: '{defaultDecimalIP()}')")
+            print(f"{red}Insira um IPv4 válido{normal} (Ex.: '{defaultDecimalIP()}')")
     submenu()
 
 def subnetting():
@@ -569,11 +574,11 @@ def subnetting():
                 print()
                 submenu()
             elif int(n_networks) < 2:
-                print("Insira apenas números inteiros maiores que 1")
+                print(f"{red}Insira apenas números inteiros maiores que 1{normal}")
             else:
                 break
         except ValueError:
-            print("Insira apenas números inteiros maiores que 1")
+            print(f"{red}Insira apenas números inteiros maiores que 1{normal}")
     while True:
         try:
             network_ip = input("Insira o IPv4 da rede inicial (CIDR): ")
@@ -581,7 +586,7 @@ def subnetting():
             network = ipaddress.ip_network(network_ip)
             break
         except (ValueError, UnboundLocalError):
-            print("Insira um IP de rede (CIDR) válido (Ex:. 10.0.0.0/8)")
+            print(f"{red}Insira um IP de rede (CIDR) válido{normal} (Ex:. 10.0.0.0/8)")
             print()
     networks = {}
     n_networks = int(n_networks)
@@ -603,7 +608,7 @@ def subnetting():
     print("=" * 62)
     while counter < n_networks: 
         print(dedent(f"""
-            \033[4;36m{"Rede"} {counter+1}\033[0m
+            {cyan_underline}Rede {counter+1}{normal}
             - CIDR: /{networks[list(networks)[counter]]['cidr']}
             - Máscara de Rede: {networks[list(networks)[counter]]['network_mask']}
             - IP da Rede: {networks[list(networks)[counter]]['network_ip']}
@@ -624,11 +629,11 @@ def vlsm():
                 print()
                 submenu()
             elif int(n_networks) < 1:
-                print("Insira apenas números inteiros positivos")
+                print(f"{red}Insira apenas números inteiros positivos{normal}")
             else:
                 break
         except ValueError:
-            print("Insira apenas números inteiros positivos")
+            print(f"{red}Insira apenas números inteiros positivos{normal}")
     networks = {}
     n_networks = int(n_networks)
     for netw in range(n_networks):
@@ -636,7 +641,7 @@ def vlsm():
             try:
                 network_input = int(input(f"Dispositivos necessários para a rede {netw+1}: "))
                 if network_input < 1:
-                    print("Insira apenas números inteiros positivos")
+                    print(f"{red}Insira apenas números inteiros positivos{normal}")
                 else:
                     networks[f'network_{netw}'] = {
                         'needed_hosts': network_input,
@@ -651,7 +656,7 @@ def vlsm():
                     }
                     break
             except ValueError:
-                print("Insira apenas números inteiros positivos")
+                print(f"{red}Insira apenas números inteiros positivos{normal}")
     counter = 0
     while counter < n_networks:
         cidr = 0
@@ -671,7 +676,7 @@ def vlsm():
             network0 = ipaddress.ip_network(f"{ip}/{sorted_networks[list(sorted_networks)[0]]['cidr']}")
             break
         except (ValueError, UnboundLocalError):
-            print("Insira um IP de rede válido (Ex:. 10.0.0.0)")
+            print(f"{red}Insira um IP de rede válido (Ex:. 10.0.0.0){normal}")
             print()
     networks[list(sorted_networks)[0]]['network_mask'] = network0.netmask
     networks[list(sorted_networks)[0]]['hosts'] = (network0.num_addresses - 2)
@@ -693,7 +698,7 @@ def vlsm():
     print("=" * 62)
     while counter < n_networks - 1: 
         print(dedent(f"""
-            \033[4;36m{"Rede"} {counter+2}\033[0m ({networks[list(sorted_networks)[counter+1]]['needed_hosts']} dispositivos)
+            {cyan_underline}Rede {counter+2}{normal} ({networks[list(sorted_networks)[counter+1]]['needed_hosts']} dispositivos)
             - CIDR: /{networks[list(sorted_networks)[counter+1]]['cidr']}
             - Máscara de Rede: {networks[list(sorted_networks)[counter+1]]['network_mask']}
             - Rede de IP: {networks[list(sorted_networks)[counter+1]]['network_ip']}
