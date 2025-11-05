@@ -12,6 +12,12 @@ tools = [
     "   6. VLSM",
 ]
 
+red = "\033[31m"
+cyan_underline = "\033[4;36m"
+green_bold = "\033[1;32m"
+bold = "\033[1m"
+normal  = "\033[0m"
+
 def logo():
     print("=" * 62)
     print(dedent(f"""\
@@ -42,9 +48,9 @@ def menu():
                     if int(option) >= 1 and int(option) <= 6:
                         tool(int(option))
                     else:
-                        print("Valid options: 1 to 6")
+                        print(f"{red}Valid options: 1 to 6{normal}")
             except ValueError:
-                print("Valid options: 1 to 6")
+                print(f"{red}Valid options: 1 to 6{normal}")
 
 def submenu():
     print(f"""\
@@ -61,9 +67,9 @@ def submenu():
             elif int(sub_option) == 0:
                 exit()
             else:
-                print("Valid options: 0 or 1")
+                print(f"{red}Valid options: 0 or 1{normal}")
         except ValueError:
-            print("Valid options: 0 or 1")
+            print(f"{red}Valid options: 0 or 1{normal}")
 
 def resultHeaderFooter():
     print()
@@ -73,7 +79,7 @@ def toolHeader():
     toolTitle = tools[int(option)-1]
     print(dedent(f"""
         {"=" * 62}
-        \033[1;32m{"Pycket Tracer Tools"}\033[0m
+        {green_bold}Pycket Tracer Tools{normal}
         {toolTitle[6:]}
         {"=" * 62}
         """))
@@ -111,7 +117,7 @@ def decToBin():
                 resultHeaderFooter()
                 break
         except ValueError:
-            print(f"Only valid IP Addresses allowed (Ex.: '{defaultDecimalIP()}')")
+            print(f"{red}Only valid IP Addresses allowed{normal} (Ex.: '{defaultDecimalIP()}')")
     submenu()
 
 def binToDec():
@@ -132,9 +138,9 @@ def binToDec():
                     resultHeaderFooter()
                     break
                 else:
-                    print(f"Only valid IP addresses allowed (Ex.: '{defaultBinaryIP()}')")
+                    print(f"{red}Only valid IP addresses allowed{normal} (Ex.: '{defaultBinaryIP()}')")
         except ValueError:
-            print(f"Only valid IP addresses allowed (Ex.: '{defaultBinaryIP()}')")
+            print(f"{red}Only valid IP addresses allowed{normal} (Ex.: '{defaultBinaryIP()}')")
     submenu()
 
 def subnetCIDR():
@@ -149,7 +155,7 @@ def subnetCIDR():
                 hosts = int(hosts)
                 break
         except ValueError:
-            print("Enter integers only")
+            print(f"{red}Enter integers only{normal}")
     totalHosts = hosts + 2
     bits = 0
     while (2 ** bits) < totalHosts:
@@ -173,7 +179,7 @@ def subnetCIDR():
             resultHeaderFooter()
             break
         except (ValueError, UnboundLocalError):
-            print("Only valid network IP allowed (Ex:. 10.0.0.0)")
+            print(f"{red}Only valid network IP allowed{normal} (Ex:. 10.0.0.0)")
     submenu()
 
 def ipClass():
@@ -222,7 +228,7 @@ def ipClass():
                     resultHeaderFooter()
                     break
         except ValueError:
-            print(f"Only valid IP addresses allowed (Ex.: '{defaultDecimalIP()}')")
+            print(f"{red}Only valid IP addresses allowed{normal} (Ex.: '{defaultDecimalIP()}')")
     submenu()
 
 def subnetting():
@@ -234,41 +240,39 @@ def subnetting():
                 print()
                 submenu()
             elif int(n_networks) < 2:
-                print("Only integers greater than 1 allowed")
+                print(f"{red}Only integers greater than 1 allowed{normal}")
             else:
                 break
         except ValueError:
-            print("Only integers greater than 1 allowed")
+            print(f"{red}Only integers greater than 1 allowed{normal}")
     while True:
         try:
             network_ip = input("Enter the desired initial network IP(CIDR): ")
-            print()
             network = ipaddress.ip_network(network_ip)
+            networks = {}
+            n_networks = int(n_networks)
+            bits_needed = math.ceil(math.log2(n_networks))
+            new_prefix = network.prefixlen + bits_needed
+            subnets = list(network.subnets(new_prefix=new_prefix))
+            for netw in range(n_networks):
+                networks[f'network_{netw}'] = {
+                    'network_ip': subnets[netw],
+                    'network_mask': subnets[netw].netmask,
+                    'cidr': subnets[netw].prefixlen,
+                    'hosts': subnets[netw].num_addresses-2,
+                    'first_ip': subnets[netw][1],
+                    'last_ip': subnets[netw][-2],
+                    'broadcast_ip': subnets[netw].broadcast_address
+                }
+                netw += 1
             break
-        except (ValueError, UnboundLocalError):
-            print("Only valid network IP(CIDR) allowed (Ex:. 10.0.0.0/8)")
-            print()
-    networks = {}
-    n_networks = int(n_networks)
-    bits_needed = math.ceil(math.log2(n_networks))
-    new_prefix = network.prefixlen + bits_needed
-    subnets = list(network.subnets(new_prefix=new_prefix))
-    for netw in range(n_networks):
-        networks[f'network_{netw}'] = {
-            'network_ip': subnets[netw],
-            'network_mask': subnets[netw].netmask,
-            'cidr': subnets[netw].prefixlen,
-            'hosts': subnets[netw].num_addresses-2,
-            'first_ip': subnets[netw][1],
-            'last_ip': subnets[netw][-2],
-            'broadcast_ip': subnets[netw].broadcast_address
-        }
-        netw += 1
+        except (ValueError, UnboundLocalError, IndexError):
+            print(f"{red}Only valid network IP(CIDR) allowed (Ex:. 10.0.0.0/8){normal}")
     counter = 0
     print("=" * 62)
     while counter < n_networks: 
         print(dedent(f"""
-            \033[4;36m{"Network"} {counter+1}\033[0m
+            {cyan_underline}Network {counter+1}{normal}
             - CIDR: /{networks[list(networks)[counter]]['cidr']}
             - Subnet Mask: {networks[list(networks)[counter]]['network_mask']}
             - Network IP: {networks[list(networks)[counter]]['network_ip']}
@@ -289,11 +293,11 @@ def vlsm():
                 print()
                 submenu()
             elif int(n_networks) < 1:
-                print("Only positive integers allowed")
+                print(f"{red}Only positive integers allowed{normal}")
             else:
                 break
         except ValueError:
-            print("Only positive integers allowed")
+            print(f"{red}Only positive integers allowed{normal}")
     networks = {}
     n_networks = int(n_networks)
     for netw in range(n_networks):
@@ -301,7 +305,7 @@ def vlsm():
             try:
                 network_input = int(input(f"Hosts required for network {netw+1}: "))
                 if network_input < 1:
-                    print("Only positive integers allowed")
+                    print(f"{red}Only positive integers allowed{normal}")
                 else:
                     networks[f'network_{netw}'] = {
                         'needed_hosts': network_input,
@@ -316,7 +320,7 @@ def vlsm():
                     }
                     break
             except ValueError:
-                print("Only positive integers allowed")
+                print(f"{red}Only positive integers allowed{normal}")
     counter = 0
     while counter < n_networks:
         cidr = 0
@@ -331,13 +335,11 @@ def vlsm():
     while True:
         try:
             network0_ip = input("Enter the desired initial network IP: ")
-            print()
             ip = ipaddress.IPv4Address(network0_ip)
             network0 = ipaddress.ip_network(f"{ip}/{sorted_networks[list(sorted_networks)[0]]['cidr']}")
             break
         except (ValueError, UnboundLocalError):
-            print("Only valid network IP allowed (Ex:. 10.0.0.0)")
-            print()
+            print(f"{red}Only valid network IP allowed{normal} (Ex:. 10.0.0.0)")
     networks[list(sorted_networks)[0]]['network_mask'] = network0.netmask
     networks[list(sorted_networks)[0]]['hosts'] = (network0.num_addresses - 2)
     networks[list(sorted_networks)[0]]['network_ip'] = network0.network_address
@@ -358,7 +360,7 @@ def vlsm():
     print("=" * 62)
     while counter < n_networks - 1: 
         print(dedent(f"""
-            \033[4;36m{"Network"} {counter+2}\033[0m ({networks[list(sorted_networks)[counter+1]]['needed_hosts']} hosts)
+            {cyan_underline}Network {counter+2}{normal} ({networks[list(sorted_networks)[counter+1]]['needed_hosts']} hosts)
             - CIDR: /{networks[list(sorted_networks)[counter+1]]['cidr']}
             - Subnet Mask: {networks[list(sorted_networks)[counter+1]]['network_mask']}
             - Network IP: {networks[list(sorted_networks)[counter+1]]['network_ip']}

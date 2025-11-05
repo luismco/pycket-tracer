@@ -548,7 +548,7 @@ def ipClass():
                     break
                 elif ipaddress.IPv4Address(ip).is_multicast is True:
                     resultHeaderFooter()
-                    print(f"The IP '{ip}' é multicast (Classe D)")
+                    print(f"O IP '{ip}' é multicast (Classe D)")
                     resultHeaderFooter()
                     break
                 elif ipaddress.IPv4Address(ip).is_private is True:
@@ -582,28 +582,26 @@ def subnetting():
     while True:
         try:
             network_ip = input("Insira o IPv4 da rede inicial (CIDR): ")
-            print()
             network = ipaddress.ip_network(network_ip)
+            networks = {}
+            n_networks = int(n_networks)
+            bits_needed = math.ceil(math.log2(n_networks))
+            new_prefix = network.prefixlen + bits_needed
+            subnets = list(network.subnets(new_prefix=new_prefix))
+            for netw in range(int(n_networks)):
+                networks[f'network_{netw}'] = {
+                    'network_ip': subnets[netw],
+                    'network_mask': subnets[netw].netmask,
+                    'cidr': subnets[netw].prefixlen,
+                    'hosts': subnets[netw].num_addresses-2,
+                    'first_ip': subnets[netw][1],
+                    'last_ip': subnets[netw][-2],
+                    'broadcast_ip': subnets[netw].broadcast_address
+                }
+                netw += 1
             break
-        except (ValueError, UnboundLocalError):
+        except (ValueError, UnboundLocalError, IndexError):
             print(f"{red}Insira um IP de rede (CIDR) válido{normal} (Ex:. 10.0.0.0/8)")
-            print()
-    networks = {}
-    n_networks = int(n_networks)
-    bits_needed = math.ceil(math.log2(n_networks))
-    new_prefix = network.prefixlen + bits_needed
-    subnets = list(network.subnets(new_prefix=new_prefix))
-    for netw in range(int(n_networks)):
-        networks[f'network_{netw}'] = {
-            'network_ip': subnets[netw],
-            'network_mask': subnets[netw].netmask,
-            'cidr': subnets[netw].prefixlen,
-            'hosts': subnets[netw].num_addresses-2,
-            'first_ip': subnets[netw][1],
-            'last_ip': subnets[netw][-2],
-            'broadcast_ip': subnets[netw].broadcast_address
-        }
-        netw += 1
     counter = 0
     print("=" * 62)
     while counter < n_networks: 
@@ -671,13 +669,11 @@ def vlsm():
     while True:
         try:
             network0_ip = input("Insira o IPv4 da rede inicial: ")
-            print()
             ip = ipaddress.IPv4Address(network0_ip)
             network0 = ipaddress.ip_network(f"{ip}/{sorted_networks[list(sorted_networks)[0]]['cidr']}")
             break
         except (ValueError, UnboundLocalError):
             print(f"{red}Insira um IP de rede válido (Ex:. 10.0.0.0){normal}")
-            print()
     networks[list(sorted_networks)[0]]['network_mask'] = network0.netmask
     networks[list(sorted_networks)[0]]['hosts'] = (network0.num_addresses - 2)
     networks[list(sorted_networks)[0]]['network_ip'] = network0.network_address
