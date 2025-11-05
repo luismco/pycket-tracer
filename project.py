@@ -6,19 +6,26 @@ import getpass
 import string
 import math
 import json
+import os
+
+# Garante que o programa reconhece o ficheiro database.json e inicia a variável 'database_path' com o caminho completo do sistema
+file_dir = os.path.dirname(os.path.abspath(__file__))
+database_path = os.path.join(file_dir, 'database.json')
+
+# Lê o ficheiro database.json e inicia a variável 'database' com os utilizadores (dicionários)
+with open(database_path, 'r') as f:
+   database = json.load(f)
+
+# Atualiza o ficheiro database.json com os dados da variável 'database' (dicionários)
+def databaseExport():
+    database_export = json.dumps(database, indent=4)
+    with open(database_path, "w") as f:
+        f.write(database_export)
 
 lowercase = string.ascii_lowercase
 uppercase = string.ascii_uppercase
 numbers = string.digits
 special = string.punctuation
-
-with open('database.json', 'r') as f:
-   database = json.load(f)
-
-def databaseExport():
-    database_export = json.dumps(database, indent=4)
-    with open("database.json", "w") as f:
-        f.write(database_export)
 
 tools = [
     "   1. Conversão de IP (Decimal para Binário)", 
@@ -34,6 +41,7 @@ tools = [
     "   8. Administração de Utilizadores"
 ]
 
+# Define as cores aplicadas no texto
 red = "\033[31m"
 cyan_underline = "\033[4;36m"
 green_bold = "\033[1;32m"
@@ -52,11 +60,11 @@ def logo():
 |_|    \__, |\___|_|\_\___|\__|   |_||_|  \__,_|\___\___|_|   
        |___/                                                  """))
 
-#########################
-### Menus and Headers ###
-#########################
+############################
+### Menus and Cabeçalhos ###
+############################
 def mainHeader():
-
+    print("\033c", end="")
     logo()
     print(dedent(f"""\
         {"=" * 62}
@@ -197,9 +205,9 @@ def toolHeader():
         {"=" * 62}
         """))
 
-######################
-### Main Functions ###
-######################
+##########################
+### Funções Principais ###
+##########################
 def login():
     print("\033c", end="")
     global username_input
@@ -336,8 +344,8 @@ def changePassword():
     print("*** Nova Password ***")
     password_get()
     database[current_user]['password'] = hashed_password
-    print(f"\n{green_bold}A sua password foi atualizada com sucesso!{normal}")
     databaseExport()
+    print(f"\n{green_bold}A sua password foi atualizada com sucesso!{normal}")
     print("\nClique enter para voltar ao menu anterior")
     getpass.getpass(prompt="")
     menu()
@@ -449,12 +457,12 @@ def decToBin():
     toolHeader()
     while True:
         try:
-            decimalIP = input("Insira um endereço de IPv4 em formato decimal: ")
-            if decimalIP == "":
+            decimal_ip = input("Insira um endereço de IPv4 em formato decimal: ")
+            if decimal_ip == "":
                 print()
                 break
             else:
-                ip = ('{:b}'.format(ipaddress.IPv4Address(decimalIP)))
+                ip = ('{:b}'.format(ipaddress.IPv4Address(decimal_ip)))
                 resultHeaderFooter()
                 print(f"IP em formato binário: {ip[0:9]}.{ip[9:17]}.{ip[17:25]}.{ip[25:33]}")
                 resultHeaderFooter()
@@ -467,15 +475,15 @@ def binToDec():
     toolHeader()
     while True:
         try:
-            binaryIP = input("Insira um endereço de IPv4 em formato binário: ")
-            if binaryIP == "":
+            binary_ip = input("Insira um endereço de IPv4 em formato binário: ")
+            if binary_ip == "":
                 print()
                 break
             else:
-                binaryIP = binaryIP.replace(".", "")
-                if len(binaryIP) == 32:
-                    binaryIP = int(binaryIP, 2)
-                    ip = ipaddress.IPv4Address(binaryIP)
+                binary_ip = binary_ip.replace(".", "")
+                if len(binary_ip) == 32:
+                    binary_ip = int(binary_ip, 2)
+                    ip = ipaddress.IPv4Address(binary_ip)
                     resultHeaderFooter()
                     print(f"IP em formato decimal: {ip}")
                     resultHeaderFooter()
@@ -502,15 +510,15 @@ def subnetCIDR():
                     print(f"{red}Atingiu o número máximo de dispositivos posíveis para endereços de IPv4 (4294967294){normal}")
         except ValueError:
             print(f"{red}Insira apenas números inteiros{normal}")
-    totalHosts = hosts + 2
+    total_hosts = hosts + 2
     bits = 0
-    while (2 ** bits) < totalHosts:
+    while (2 ** bits) < total_hosts:
         bits += 1
         cidr = 32 - bits
     while True:
         try:
-            decimalIP = input("Insira o IPv4 da rede: ")
-            ip = ipaddress.IPv4Address(decimalIP)
+            decimal_ip = input("Insira o IPv4 da rede: ")
+            ip = ipaddress.IPv4Address(decimal_ip)
             network = ipaddress.ip_network(f"{ip}/{cidr}")
             resultHeaderFooter()
             print(dedent(f"""\
@@ -593,12 +601,12 @@ def subnetting():
     while True:
         try:
             network_ip = input("Insira o IPv4 da rede inicial (CIDR): ")
-            network = ipaddress.ip_network(network_ip)
+            initial_network = ipaddress.ip_network(network_ip)
             networks = {}
             n_networks = int(n_networks)
             bits_needed = math.ceil(math.log2(n_networks))
-            new_prefix = network.prefixlen + bits_needed
-            subnets = list(network.subnets(new_prefix=new_prefix))
+            new_prefix = initial_network.prefixlen + bits_needed
+            subnets = list(initial_network.subnets(new_prefix=new_prefix))
             for netw in range(int(n_networks)):
                 networks[f'network_{netw}'] = {
                     'network_ip': subnets[netw],
@@ -683,18 +691,18 @@ def vlsm():
     sorted_networks = dict(sorted(networks.items(), reverse=True, key=lambda item: item[1]['needed_hosts']))
     while True:
         try:
-            network0_ip = input("Insira o IPv4 da rede inicial: ")
-            ip = ipaddress.IPv4Address(network0_ip)
-            network0 = ipaddress.ip_network(f"{ip}/{sorted_networks[list(sorted_networks)[0]]['cidr']}")
+            initial_network_ip = input("Insira o IPv4 da rede inicial: ")
+            ip = ipaddress.IPv4Address(initial_network_ip)
+            initial_network = ipaddress.ip_network(f"{ip}/{sorted_networks[list(sorted_networks)[0]]['cidr']}")
             break
         except (ValueError, UnboundLocalError):
             print(f"{red}Insira um IP de rede válido (Ex:. 10.0.0.0){normal}")
-    networks[list(sorted_networks)[0]]['network_mask'] = network0.netmask
-    networks[list(sorted_networks)[0]]['hosts'] = (network0.num_addresses - 2)
-    networks[list(sorted_networks)[0]]['network_ip'] = network0.network_address
-    networks[list(sorted_networks)[0]]['first_ip'] = network0[1]
-    networks[list(sorted_networks)[0]]['last_ip'] = network0[-2]
-    networks[list(sorted_networks)[0]]['broadcast_ip'] = network0.broadcast_address
+    networks[list(sorted_networks)[0]]['network_mask'] = initial_network.netmask
+    networks[list(sorted_networks)[0]]['hosts'] = (initial_network.num_addresses - 2)
+    networks[list(sorted_networks)[0]]['network_ip'] = initial_network.network_address
+    networks[list(sorted_networks)[0]]['first_ip'] = initial_network[1]
+    networks[list(sorted_networks)[0]]['last_ip'] = initial_network[-2]
+    networks[list(sorted_networks)[0]]['broadcast_ip'] = initial_network.broadcast_address
     for x in range(n_networks - 1):
         network_ip = (sorted_networks[list(sorted_networks)[x]]['broadcast_ip'])+1
         network_n = ipaddress.ip_network(f"{network_ip}/{sorted_networks[list(sorted_networks)[x+1]]['cidr']}")
@@ -741,9 +749,9 @@ def tool(option):
     elif option == 8:
         administration()
 
-#######################
-### Other Functions ###
-#######################
+######################
+### Outras Funções ###
+######################
 def defaultDecimalIP():
     randIP = []
     for x in range(4):
