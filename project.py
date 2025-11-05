@@ -5,17 +5,20 @@ import hashlib
 import getpass
 import string
 import math
+import json
 
 lowercase = string.ascii_lowercase
 uppercase = string.ascii_uppercase
 numbers = string.digits
 special = string.punctuation
 
-database = {
-    'luis': {'password': '20f15cfb78a1c83af3bd7976a78952ea1b1ed435a706bb04ba2c83c7fd0a4965', 'role': 'admin'}, 
-    'diogo': {'password': '9ca6a0e5e922e01e20f11d999ecc1685e969c9acc2abc83006281c131fe22a15', 'role': 'admin'},
-    'ruben': {'password': 'c1cc69e61c0f1c7ade8df0f2994e582e7c1f2c57d1ec192a0baf9f96b7739d9d', 'role': 'user'}
-}
+with open('database.json', 'r') as f:
+   database = json.load(f)
+
+def databaseExport():
+    database_export = json.dumps(database, indent=4)
+    with open("database.json", "w") as f:
+        f.write(database_export)
 
 tools = [
     "   1. Conversão de IP (Decimal para Binário)", 
@@ -53,7 +56,7 @@ def logo():
 ### Menus and Headers ###
 #########################
 def mainHeader():
-    print("\033c", end="")
+
     logo()
     print(dedent(f"""\
         {"=" * 62}
@@ -242,6 +245,7 @@ def signin():
             'password': hashed_password,
             'role':'user'
             }
+        databaseExport()
         print(f"\n{green_bold}Login para o utilizador '{username_input}' criado com sucesso!{normal}")
         print("\nClique enter para voltar ao menu anterior")
         getpass.getpass(prompt="")
@@ -282,6 +286,7 @@ def removeUser():
                     Selecione a opção desejada: """))
                     if int(remove_confirm) == 1:
                         database.pop(username_input)
+                        databaseExport()
                         print(f"\n{green_bold}Utilizador '{username_input}' removido com sucesso!{normal}")
                         print("\nClique enter para voltar ao menu anterior")
                         getpass.getpass(prompt="")
@@ -313,6 +318,7 @@ def changePasswordAdmin():
     print("*** Nova Password ***")
     password_get()
     database[username_input]['password'] = hashed_password
+    databaseExport()
     print(f"\n{green_bold}A password do utilizador '{username_input}' foi atualizada com sucesso!{normal}")
     print("\nClique enter para voltar ao menu anterior")
     getpass.getpass(prompt="")
@@ -331,6 +337,7 @@ def changePassword():
     password_get()
     database[current_user]['password'] = hashed_password
     print(f"\n{green_bold}A sua password foi atualizada com sucesso!{normal}")
+    databaseExport()
     print("\nClique enter para voltar ao menu anterior")
     getpass.getpass(prompt="")
     menu()
@@ -370,6 +377,7 @@ def changeRole():
             role_option = input("Selecione a opção desejada: ")
             if int(role_option) == 1:
                 database[username_input]['role'] = new_role
+                databaseExport()
                 print(f"\n{green_bold}As permissões do utilizador '{username_input}' foram alteradas com sucesso!{normal}")
                 print("\nClique enter para voltar ao menu anterior")
                 getpass.getpass(prompt="")
