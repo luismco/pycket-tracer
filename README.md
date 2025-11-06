@@ -27,6 +27,7 @@ If you intend to test the networking tools, please use [Pycket Tracer Tools](htt
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
+  <a href="#road-map">Road Map</a> •
   <a href="#how-to-use">How To Use</a> •
   <a href="#modules">Modules</a>
 </p>
@@ -49,6 +50,10 @@ If you intend to test the networking tools, please use [Pycket Tracer Tools](htt
   - Based on number of needed networks
 * VLSM
   - Based on number of needed hosts per network
+
+## Road Map
+* Add support for IPv6
+* Introduce basic Cisco IOS commands
 
 ## How To Use
 
