@@ -54,16 +54,20 @@ If you intend to test the networking tools, please use [Pycket Tracer Tools](htt
 
 To clone and run this application, you'll just need [Python](https://www.python.org/downloads/) installed on your computer. From your command line:
 
-<b>Example for Linux</b>
+<b>Linux</b>
 ```bash
-# Clone this repository
 git clone https://github.com/luismco/pycket-tracer
-
-# Go into the repository
 cd pycket-tracer
-
-# Run the app
 python3 ./pycket-tracer.py
+
+```
+
+<b>Windows</b>
+```bash
+git clone https://github.com/luismco/pycket-tracer
+cd pycket-tracer
+python ./pycket-tracer.py
+
 ```
 
 ## Modules
@@ -77,5 +81,7 @@ This software uses the following python modules
 - getpass
 - string
 - math
+- os
+- json
 
 
