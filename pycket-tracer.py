@@ -144,48 +144,6 @@ def binToDec():
             print(f"{red}Only valid IP addresses allowed{normal} (Ex.: '{defaultBinaryIP()}')")
     submenu()
 
-def subnetCIDR():
-    toolHeader()
-    while True:
-        try:
-            hosts = input("Hosts required: ")
-            if hosts == "":
-                print()
-                submenu()
-            else:
-                hosts = int(hosts)
-                if hosts <= 4294967294:
-                    break
-                else:
-                    print(f"{red}Number of possible hosts for IPv4 reached (4294967294), try a smaller network{normal}")
-        except ValueError:
-            print(f"{red}Enter integers only{normal}")
-    totalHosts = hosts + 2
-    bits = 0
-    while (2 ** bits) < totalHosts:
-        bits += 1
-        cidr = 32 - bits
-    while True:
-        try:
-            decimalIP = input("Enter the desired network IP: ")
-            ip = ipaddress.IPv4Address(decimalIP)
-            network = ipaddress.ip_network(f"{ip}/{cidr}")
-            resultHeaderFooter()
-            print(dedent(f"""\
-                - Subnet Mask: {network.netmask}
-                - CIDR: /{cidr}
-                - Available IPs: {network.num_addresses - 2}
-                - Network IP: {network.network_address}
-                - First Usable IP: {ipaddress.IPv4Network(network)[1]}
-                - Last Usable IP: {ipaddress.IPv4Network(network)[-2]}
-                - Broadcast IP: {network.broadcast_address}
-            """))
-            resultHeaderFooter()
-            break
-        except (ValueError, UnboundLocalError):
-            print(f"{red}Only valid network IP allowed{normal} (Ex:. 10.0.0.0)")
-    submenu()
-
 def ipClass():
     toolHeader()
     while True:
@@ -235,6 +193,48 @@ def ipClass():
             print(f"{red}Only valid IP addresses allowed{normal} (Ex.: '{defaultDecimalIP()}')")
     submenu()
 
+def subnetCIDR():
+    toolHeader()
+    while True:
+        try:
+            hosts = input("Hosts required: ")
+            if hosts == "":
+                print()
+                submenu()
+            else:
+                hosts = int(hosts)
+                if hosts < 2147483646:
+                    break
+                else:
+                    print(f"{red}Number of possible hosts for IPv4 networks reached{normal}")
+        except ValueError:
+            print(f"{red}Enter integers only{normal}")
+    totalHosts = hosts + 2
+    bits = 0
+    while (2 ** bits) < totalHosts:
+        bits += 1
+        cidr = 32 - bits
+    while True:
+        try:
+            decimalIP = input("Enter the desired network IP: ")
+            ip = ipaddress.IPv4Address(decimalIP)
+            network = ipaddress.ip_network(f"{ip}/{cidr}")
+            resultHeaderFooter()
+            print(dedent(f"""\
+                - Subnet Mask: {network.netmask}
+                - CIDR: /{cidr}
+                - Available IPs: {network.num_addresses - 2}
+                - Network IP: {network.network_address}
+                - First Usable IP: {ipaddress.IPv4Network(network)[1]}
+                - Last Usable IP: {ipaddress.IPv4Network(network)[-2]}
+                - Broadcast IP: {network.broadcast_address}
+            """))
+            resultHeaderFooter()
+            break
+        except (ValueError, UnboundLocalError):
+            print(f"{red}Only valid network IP allowed{normal} (Ex:. 10.0.0.0)")
+    submenu()
+
 def subnetting():
     toolHeader()
     while True:
@@ -245,6 +245,8 @@ def subnetting():
                 submenu()
             elif int(n_networks) < 2:
                 print(f"{red}Only integers greater than 1 allowed{normal}")
+            elif int(n_networks) > 16777216:
+                print(f"{red}Number of possible IPv4 networks reached{normal}")
             else:
                 break
         except ValueError:
@@ -252,39 +254,63 @@ def subnetting():
     while True:
         try:
             network_ip = input("Enter the desired initial network IP(CIDR): ")
-            network = ipaddress.ip_network(network_ip)
+            initial_network = ipaddress.ip_network(network_ip)
             networks = {}
             n_networks = int(n_networks)
             bits_needed = math.ceil(math.log2(n_networks))
-            new_prefix = network.prefixlen + bits_needed
-            subnets = list(network.subnets(new_prefix=new_prefix))
-            for netw in range(n_networks):
-                networks[f'network_{netw}'] = {
-                    'network_ip': subnets[netw],
-                    'network_mask': subnets[netw].netmask,
-                    'cidr': subnets[netw].prefixlen,
-                    'hosts': subnets[netw].num_addresses-2,
-                    'first_ip': subnets[netw][1],
-                    'last_ip': subnets[netw][-2],
-                    'broadcast_ip': subnets[netw].broadcast_address
-                }
-                netw += 1
-            break
+            next_prefix = initial_network.prefixlen + bits_needed
+            if next_prefix > 31:
+                print(f"{red}The intial network cannot be divided in {n_networks} networks{normal}")
+            elif next_prefix == 31:
+                subnets = list(initial_network.subnets(new_prefix=next_prefix))
+                for netw in range(n_networks):
+                    networks[f'network_{netw}'] = {
+                        'network_mask': subnets[netw].netmask,
+                        'cidr': subnets[netw].prefixlen,
+                        'first_ip': subnets[netw][0],
+                        'last_ip': subnets[netw].broadcast_address
+                    }
+                    netw += 1
+                break
+            else:
+                subnets = list(initial_network.subnets(new_prefix=next_prefix))
+                for netw in range(n_networks):
+                    networks[f'network_{netw}'] = {
+                        'network_ip': subnets[netw],
+                        'network_mask': subnets[netw].netmask,
+                        'cidr': subnets[netw].prefixlen,
+                        'hosts': subnets[netw].num_addresses-2,
+                        'first_ip': subnets[netw][1],
+                        'last_ip': subnets[netw][-2],
+                        'broadcast_ip': subnets[netw].broadcast_address
+                    }
+                    netw += 1
+                break
         except (ValueError, UnboundLocalError, IndexError):
             print(f"{red}Only valid network IP(CIDR) allowed (Ex:. 10.0.0.0/8){normal}")
     counter = 0
     print("=" * 62)
-    while counter < n_networks: 
-        print(dedent(f"""
-            {cyan_underline}Network {counter+1}{normal}
-            - CIDR: /{networks[list(networks)[counter]]['cidr']}
-            - Subnet Mask: {networks[list(networks)[counter]]['network_mask']}
-            - Network IP: {networks[list(networks)[counter]]['network_ip']}
-            - First Usable IP: {networks[list(networks)[counter]]['first_ip']}
-            - Last Usable IP: {networks[list(networks)[counter]]['last_ip']}
-            - Broadcast IP: {networks[list(networks)[counter]]['broadcast_ip']}
-            - Total Usable IPs: {networks[list(networks)[counter]]['hosts']}"""))
-        counter += 1
+    if next_prefix == 31:
+        while counter < n_networks: 
+            print(dedent(f"""
+                {cyan_underline}Network {counter+1} - Point-to-point link (RFC 3021){normal}
+                - CIDR: /{networks[list(networks)[counter]]['cidr']}
+                - Subnet Mask: {networks[list(networks)[counter]]['network_mask']}
+                - First IP: {networks[list(networks)[counter]]['first_ip']}
+                - Last IP: {networks[list(networks)[counter]]['last_ip']}"""))
+            counter += 1
+    else:
+        while counter < n_networks: 
+            print(dedent(f"""
+                {cyan_underline}Network {counter+1}{normal}
+                - CIDR: /{networks[list(networks)[counter]]['cidr']}
+                - Subnet Mask: {networks[list(networks)[counter]]['network_mask']}
+                - Network IP: {networks[list(networks)[counter]]['network_ip']}
+                - First Usable IP: {networks[list(networks)[counter]]['first_ip']}
+                - Last Usable IP: {networks[list(networks)[counter]]['last_ip']}
+                - Broadcast IP: {networks[list(networks)[counter]]['broadcast_ip']}
+                - Total Usable IPs: {networks[list(networks)[counter]]['hosts']}"""))
+            counter += 1
     resultHeaderFooter()
     submenu()
 
@@ -323,7 +349,7 @@ def vlsm():
                         'broadcast_ip': None
                     }
                 hosts_sum = sum(d['needed_hosts'] for d in networks.values() if d)
-                if hosts_sum >= 4294967294:
+                if hosts_sum > (4294967294-(n_networks*2)):
                     print(f"{red}Number of possible hosts for IPv4 reached (4294967294), try a smaller network{normal}")
                 else:
                     break

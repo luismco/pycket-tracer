@@ -8,7 +8,7 @@ import math
 import json
 import os
 
-# Garante que o programa reconhece o ficheiro database.json e inicia a variável 'database_path' com o caminho completo do sistema
+# Garante que o programa reconhece o caminho completo de sistema do ficheiro database.json
 file_dir = os.path.dirname(os.path.abspath(__file__))
 database_path = os.path.join(file_dir, 'database.json')
 
@@ -16,11 +16,18 @@ database_path = os.path.join(file_dir, 'database.json')
 with open(database_path, 'r') as f:
    database = json.load(f)
 
-# Atualiza o ficheiro database.json com os dados da variável 'database' (dicionários)
+# Atualiza o ficheiro database.json com os dados atualizaos da variável 'database'
 def databaseExport():
     database_export = json.dumps(database, indent=4)
     with open(database_path, "w") as f:
         f.write(database_export)
+
+# Define as cores aplicadas no texto
+red = "\033[31m"
+cyan_underline = "\033[4;36m"
+green_bold = "\033[1;32m"
+bold = "\033[1m"
+normal  = "\033[0m"
 
 lowercase = string.ascii_lowercase
 uppercase = string.ascii_uppercase
@@ -41,13 +48,6 @@ tools = [
     "   8. Administração de Utilizadores"
 ]
 
-# Define as cores aplicadas no texto
-red = "\033[31m"
-cyan_underline = "\033[4;36m"
-green_bold = "\033[1;32m"
-bold = "\033[1m"
-normal  = "\033[0m"
-
 current_user = None
 
 def logo():
@@ -63,6 +63,8 @@ def logo():
 ############################
 ### Menus and Cabeçalhos ###
 ############################
+
+# Menu inicial
 def mainHeader():
     print("\033c", end="")
     logo()
@@ -92,6 +94,7 @@ def mainHeader():
         except ValueError:
             print(f"{red}Insira apenas opções entre 1 e 2{normal}")
 
+# Menu principal
 def menu():
         print("\033c", end="")
         global option
@@ -106,6 +109,7 @@ def menu():
                 Utilizador atual: {cyan_underline}{current_user.capitalize()}{normal} (Clique enter para terminar sessão)"""))
         else:
             print()
+            # Se o utilizador não for 'admin', não tem permissão para ver e selecionar a opção 8 (Administração de Utilizadores)
             print(*tools[:-1],sep="\n")
             print(dedent(f"""
                 {"=" * 62}
@@ -129,6 +133,7 @@ def menu():
             except ValueError:
                 print(f"{red}Insira apenas opções númericas{normal}")
 
+# Submenu
 def submenu():
     print(f"""\
     1. Voltar ao menu principal
@@ -148,6 +153,7 @@ def submenu():
         except ValueError:
             print(f"{red}Insira apenas opções entre 0 e 1{normal}")
 
+# Menu de administração
 def administration():
     global admin_option
     print("\033c", end="")
@@ -192,10 +198,12 @@ def administration():
         except ValueError:
             print(f"{red}Insira apenas opções entre 1 e 5{normal}")
 
+# Cabeçalho e rodapé dos resultados
 def resultHeaderFooter():
     print()
     print("=" * 62, "\n")
 
+# Cabeçalho das ferramentas
 def toolHeader():
     toolTitle = tools[int(option)-1]
     print(dedent(f"""
@@ -208,6 +216,9 @@ def toolHeader():
 ##########################
 ### Funções Principais ###
 ##########################
+
+# Função de login
+## Funciona apenas para utilizadores disponiveis na variável 'database'
 def login():
     print("\033c", end="")
     global username_input
@@ -229,6 +240,7 @@ def login():
     current_user = username_input
     menu()
 
+# Função de registo de utilizadores
 def signin():
     print("\033c", end="")
     print(dedent(f"""
@@ -270,6 +282,9 @@ def signin():
         else:
             administration()
 
+# Função de remoção de utilizadores
+## Não permite a remoção do utilizador atual
+## Passo de confirmação para a remoção
 def removeUser():
     print("\033c", end="")
     print(dedent(f"""
@@ -308,6 +323,8 @@ def removeUser():
         else:
             print(f"{red}Utilizador não encontrado{normal}")
 
+# Função de alteração de password (administradores)
+## Permite a alteração de passwords dos utilizadores, através de um administrador
 def changePasswordAdmin():
     print("\033c", end="")
     print(dedent(f"""
@@ -332,6 +349,8 @@ def changePasswordAdmin():
     getpass.getpass(prompt="")
     administration()
 
+# Função de alteração de password (utilizadores)
+## Permite a alteração de password do utilizador atual
 def changePassword():
     print("\033c", end="")
     print(dedent(f"""
@@ -350,6 +369,8 @@ def changePassword():
     getpass.getpass(prompt="")
     menu()
 
+# Função de alteração de permissões (administradores)
+## Permite a alteração de permissões dos utilizadores, através de um administrador
 def changeRole():
     print("\033c", end="")
     print(dedent(f"""
@@ -401,6 +422,9 @@ def changeRole():
             print(f"{red}Insira apenas opções entre 1 e 2{normal}")
     administration()
 
+# Função de atribuição de password
+## Requisitos mínimos
+## Encripta a password e inicia a variável 'hashed_password' com a hash da password
 def password_get():
     global hashed_password
     while True:
@@ -430,6 +454,9 @@ def password_get():
                         """))
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
+# Função de confirmação de password
+## Encripta o input, transforma-o numa hash e compara-a com a value 'password' do utilizador atual, no dictionário 'database'
+## Máximo de 3 tentativas passwords incorretas
 def password_check():
     max_attempts = 3
     attempts = 0
@@ -453,6 +480,7 @@ def password_check():
                 getpass.getpass(prompt="")
                 exit()
 
+# Função de conversão de IP (decimal para binário)
 def decToBin():
     toolHeader()
     while True:
@@ -471,6 +499,7 @@ def decToBin():
             print(f"{red}Insira um IPv4 válido{normal} (Ex.: '{defaultDecimalIP()}')")
     submenu()
 
+# Função de conversão de IP (binário para decimal)
 def binToDec():
     toolHeader()
     while True:
@@ -494,47 +523,7 @@ def binToDec():
             print(f"{red}Insira um IPv4 válido{normal} (Ex.: '{defaultBinaryIP()}')")
     submenu()
 
-def subnetCIDR():
-    toolHeader()
-    while True:
-        try:
-            hosts = input("Insira o número de dispositivos necessários: ")
-            if hosts == "":
-                print()
-                submenu()
-            else:
-                hosts = int(hosts)
-                if hosts <= 4294967294:
-                    break
-                else:
-                    print(f"{red}Atingiu o número máximo de dispositivos posíveis para endereços de IPv4 (4294967294){normal}")
-        except ValueError:
-            print(f"{red}Insira apenas números inteiros{normal}")
-    total_hosts = hosts + 2
-    bits = 0
-    while (2 ** bits) < total_hosts:
-        bits += 1
-        cidr = 32 - bits
-    while True:
-        try:
-            decimal_ip = input("Insira o IPv4 da rede: ")
-            ip = ipaddress.IPv4Address(decimal_ip)
-            network = ipaddress.ip_network(f"{ip}/{cidr}")
-            resultHeaderFooter()
-            print(dedent(f"""\
-                - Máscara de Rede Adequeada: {network.netmask}
-                - CIDR adequado: /{cidr}
-                - Número de IPs disponíveis: {network.num_addresses - 2}
-                - IP da rede: {network.network_address}
-                - Primero IP Disponível: {ipaddress.IPv4Network(network)[1]}
-                - Último IP Disponível: {ipaddress.IPv4Network(network)[-2]}
-                - IP de Broadcast: {network.broadcast_address}"""))
-            resultHeaderFooter()
-            break
-        except (ValueError, UnboundLocalError):
-            print(f"{red}Insira um IP de rede válido{normal} (Ex:. 10.0.0.0)")
-    submenu()
-
+# Função de classificação de IPs
 def ipClass():
     toolHeader()
     while True:
@@ -584,7 +573,139 @@ def ipClass():
             print(f"{red}Insira um IPv4 válido{normal} (Ex.: '{defaultDecimalIP()}')")
     submenu()
 
+# Função de cálculo da subnet/CIDR ideal
+def subnetCIDR():
+    toolHeader()
+    while True:
+        try:
+            hosts = input("Insira o número de dispositivos necessários: ")
+            if hosts == "":
+                print()
+                submenu()
+            else:
+                hosts = int(hosts)
+                # Número máximo possível de dipositivos para redes com endereços de IPv4
+                if hosts < 2147483646:
+                    break
+                else:
+                    print(f"{red}Atingiu o número máximo de endereços possíveis para redes IPv4, tente uma rede menor{normal}")
+        except ValueError:
+            print(f"{red}Insira apenas números inteiros{normal}")
+    # Todas as redes têm de incluir 2 IPs (rede e broadcast), a adicionar aos hosts totais
+    total_ips = hosts + 2
+    hostID_bits = 0
+    # O IPv4 é constituido por 32 bits, que são divididos entre networkID e hostID
+    ## Para calcular o CIDR ideal, começamos com 32 bits no networkID
+    ## O número de IPs por rede = 2^hostID bits
+    ## Começando com 0 hostID bits, enquanto a cálculo anterior for inferior ao 'total_ips', incrementamos 1 bit ao hostID
+    ## O CIDR é igual ao múmero de bits restantes no networkID
+    while (2 ** hostID_bits) < total_ips:
+        hostID_bits += 1
+        cidr = 32 - hostID_bits
+    while True:
+        try:
+            decimal_ip = input("Insira o IPv4 da rede: ")
+            ip = ipaddress.IPv4Address(decimal_ip)
+            network = ipaddress.ip_network(f"{ip}/{cidr}")
+            resultHeaderFooter()
+            print(dedent(f"""\
+                - Máscara de Rede Adequeada: {network.netmask}
+                - CIDR adequado: /{cidr}
+                - Número de IPs disponíveis: {network.num_addresses - 2}
+                - IP da rede: {network.network_address}
+                - Primero IP Disponível: {ipaddress.IPv4Network(network)[1]}
+                - Último IP Disponível: {ipaddress.IPv4Network(network)[-2]}
+                - IP de Broadcast: {network.broadcast_address}"""))
+            resultHeaderFooter()
+            break
+        except (ValueError, UnboundLocalError):
+            print(f"{red}Insira um IP de rede válido{normal} (Ex:. 10.0.0.0)")
+    submenu()
+
+# Função de subnetting
 def subnetting():
+    toolHeader()
+    while True:
+        try:
+            n_networks = input("Número de redes a configurar: ")
+            if n_networks == "":
+                print()
+                submenu()
+            elif int(n_networks) < 2:
+                print(f"{red}Insira apenas números inteiros maiores que 1{normal}")
+            elif int(n_networks) > 16777216:
+                print(f"{red}Atingiu o número máximo de redes possíveis para endereços IPv4{normal}")
+            else:
+                break
+        except ValueError:
+            print(f"{red}Insira apenas números inteiros maiores que 1{normal}")
+    while True:
+        try:
+            network_ip = input("Insira o IPv4 da rede inicial (CIDR): ")
+            initial_network = ipaddress.ip_network(network_ip)
+            networks = {}
+            n_networks = int(n_networks)
+            # Calcula o número de hostID bits que vai ser necessário passar para o networkID
+            ## Segue uma função logarítmica de base 2, tendo em conta o número de redes pretendida
+            bits_needed = math.ceil(math.log2(n_networks))
+            next_prefix = initial_network.prefixlen + bits_needed
+            if next_prefix > 31:
+                print(f"{red}A rede inicial não pode ser divida em {n_networks} redes{normal}")
+            elif next_prefix == 31:
+                subnets = list(initial_network.subnets(new_prefix=next_prefix))
+                for netw in range(n_networks):
+                    networks[f'network_{netw}'] = {
+                        'network_mask': subnets[netw].netmask,
+                        'cidr': subnets[netw].prefixlen,
+                        'first_ip': subnets[netw][0],
+                        'last_ip': subnets[netw].broadcast_address
+                    }
+                    netw += 1
+                break
+            else:
+                subnets = list(initial_network.subnets(new_prefix=next_prefix))
+                for netw in range(n_networks):
+                    networks[f'network_{netw}'] = {
+                        'network_ip': subnets[netw],
+                        'network_mask': subnets[netw].netmask,
+                        'cidr': subnets[netw].prefixlen,
+                        'hosts': subnets[netw].num_addresses-2,
+                        'first_ip': subnets[netw][1],
+                        'last_ip': subnets[netw][-2],
+                        'broadcast_ip': subnets[netw].broadcast_address
+                    }
+                    netw += 1
+                break
+        except (ValueError, UnboundLocalError, IndexError):
+            print(f"{red}Insira um IP de rede (CIDR) válido{normal} (Ex:. 10.0.0.0/8)")
+    counter = 0
+    print("=" * 62)
+    if next_prefix == 31:
+        while counter < n_networks: 
+            print(dedent(f"""
+                {cyan_underline}Network {counter+1} - Point-to-point link (RFC 3021){normal}
+                - CIDR: /{networks[list(networks)[counter]]['cidr']}
+                - Subnet Mask: {networks[list(networks)[counter]]['network_mask']}
+                - First IP: {networks[list(networks)[counter]]['network_ip']}
+                - Last IP: {networks[list(networks)[counter]]['broadcast_ip']}"""))
+            counter += 1
+    else:
+        while counter < n_networks: 
+            print(dedent(f"""
+                {cyan_underline}Network {counter+1}{normal}
+                - CIDR: /{networks[list(networks)[counter]]['cidr']}
+                - Subnet Mask: {networks[list(networks)[counter]]['network_mask']}
+                - Network IP: {networks[list(networks)[counter]]['network_ip']}
+                - First Usable IP: {networks[list(networks)[counter]]['first_ip']}
+                - Last Usable IP: {networks[list(networks)[counter]]['last_ip']}
+                - Broadcast IP: {networks[list(networks)[counter]]['broadcast_ip']}
+                - Total Usable IPs: {networks[list(networks)[counter]]['hosts']}"""))
+            counter += 1
+    resultHeaderFooter()
+    submenu()
+
+# Função de VLSM
+def vlsm():
     toolHeader()
     while True:
         try:
@@ -598,59 +719,6 @@ def subnetting():
                 break
         except ValueError:
             print(f"{red}Insira apenas números inteiros maiores que 1{normal}")
-    while True:
-        try:
-            network_ip = input("Insira o IPv4 da rede inicial (CIDR): ")
-            initial_network = ipaddress.ip_network(network_ip)
-            networks = {}
-            n_networks = int(n_networks)
-            bits_needed = math.ceil(math.log2(n_networks))
-            new_prefix = initial_network.prefixlen + bits_needed
-            subnets = list(initial_network.subnets(new_prefix=new_prefix))
-            for netw in range(int(n_networks)):
-                networks[f'network_{netw}'] = {
-                    'network_ip': subnets[netw],
-                    'network_mask': subnets[netw].netmask,
-                    'cidr': subnets[netw].prefixlen,
-                    'hosts': subnets[netw].num_addresses-2,
-                    'first_ip': subnets[netw][1],
-                    'last_ip': subnets[netw][-2],
-                    'broadcast_ip': subnets[netw].broadcast_address
-                }
-                netw += 1
-            break
-        except (ValueError, UnboundLocalError, IndexError):
-            print(f"{red}Insira um IP de rede (CIDR) válido{normal} (Ex:. 10.0.0.0/8)")
-    counter = 0
-    print("=" * 62)
-    while counter < n_networks: 
-        print(dedent(f"""
-            {cyan_underline}Rede {counter+1}{normal}
-            - CIDR: /{networks[list(networks)[counter]]['cidr']}
-            - Máscara de Rede: {networks[list(networks)[counter]]['network_mask']}
-            - IP da Rede: {networks[list(networks)[counter]]['network_ip']}
-            - Primeiro IP Disponível: {networks[list(networks)[counter]]['first_ip']}
-            - Último IP Disponível: {networks[list(networks)[counter]]['last_ip']}
-            - IP de Broadcast: {networks[list(networks)[counter]]['broadcast_ip']}
-            - Número Total de IPs: {networks[list(networks)[counter]]['hosts']}"""))
-        counter += 1
-    resultHeaderFooter()
-    submenu()
-
-def vlsm():
-    toolHeader()
-    while True:
-        try:
-            n_networks = input("Número de redes a configurar: ")
-            if n_networks == "":
-                print()
-                submenu()
-            elif int(n_networks) < 1:
-                print(f"{red}Insira apenas números inteiros positivos{normal}")
-            else:
-                break
-        except ValueError:
-            print(f"{red}Insira apenas números inteiros positivos{normal}")
     networks = {}
     n_networks = int(n_networks)
     for netw in range(n_networks):
@@ -659,6 +727,8 @@ def vlsm():
                 network_input = int(input(f"Dispositivos necessários para a rede {netw+1}: "))
                 if network_input < 1:
                     print(f"{red}Insira apenas números inteiros positivos{normal}")
+                elif network_input > 2147483646:
+                    print(f"{red}Não é possível a divisão de redes com mais de 2147483646 dispositivos{normal}")
                 else:
                     networks[f'network_{netw}'] = {
                         'needed_hosts': network_input,
@@ -672,8 +742,8 @@ def vlsm():
                         'broadcast_ip': None
                     }
                 hosts_sum = sum(d['needed_hosts'] for d in networks.values() if d)
-                if hosts_sum > 4294967294:
-                    print(f"{red}Atingiu o número máximo de dispositivos posíveis para endereços de IPv4 (4294967294){normal}")
+                if hosts_sum > (4294967294-(n_networks*2)):
+                    print(f"{red}Atingiu o número máximo de IPs possíveis para endereços de IPv4, tente uma rede menor{normal}")
                 else:
                     break
             except ValueError:
@@ -682,8 +752,8 @@ def vlsm():
     while counter < n_networks:
         cidr = 0
         bits = 0
-        totalHosts = networks[f'network_{counter}']['needed_ips']
-        while (2 ** bits) < totalHosts:
+        total_ips = networks[f'network_{counter}']['needed_ips']
+        while (2 ** bits) < total_ips:
             bits += 1
             cidr = (32 - bits)
         networks[f'network_{counter}']['cidr'] = cidr
@@ -730,6 +800,8 @@ def vlsm():
     print("=" * 62, "\n")
     submenu()
 
+# Função principal
+## Recebe a variável 'option' da escolha do menu principal e redireciona para a ferramenta pretendida
 def tool(option):
     print("\033c", end="")
     if option == 1:
@@ -752,17 +824,20 @@ def tool(option):
 ######################
 ### Outras Funções ###
 ######################
-def defaultDecimalIP():
-    randIP = []
-    for x in range(4):
-        randIP.append(str(random.randrange(0,256)))
-    return ".".join(randIP)
 
+# Função de gerar IPs decimais aleatórios
+def defaultDecimalIP():
+    rand_ip = []
+    for x in range(4):
+        rand_ip.append(str(random.randrange(0,256)))
+    return ".".join(rand_ip)
+
+# Função de gerar IPs binários aleatórios
 def defaultBinaryIP():
-    randIP = []
+    rand_ip = []
     for x in range(32):
-        randIP.append(str(random.randrange(0,2)))
-    randIP = "".join(randIP)
-    return f"{randIP[0:9]}.{randIP[9:17]}.{randIP[17:25]}.{randIP[25:33]}"
+        rand_ip.append(str(random.randrange(0,2)))
+    rand_ip = "".join(rand_ip)
+    return f"{rand_ip[0:9]}.{rand_ip[9:17]}.{rand_ip[17:25]}.{rand_ip[25:33]}"
 
 mainHeader()
