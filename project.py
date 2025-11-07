@@ -686,8 +686,8 @@ def subnetting():
                 {cyan_underline}Network {counter+1} - Point-to-point link (RFC 3021){normal}
                 - CIDR: /{networks[list(networks)[counter]]['cidr']}
                 - Subnet Mask: {networks[list(networks)[counter]]['network_mask']}
-                - First IP: {networks[list(networks)[counter]]['network_ip']}
-                - Last IP: {networks[list(networks)[counter]]['broadcast_ip']}"""))
+                - First IP: {networks[list(networks)[counter]]['first_ip']}
+                - Last IP: {networks[list(networks)[counter]]['last_ip']}"""))
             counter += 1
     else:
         while counter < n_networks: 
