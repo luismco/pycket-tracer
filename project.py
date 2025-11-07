@@ -634,7 +634,7 @@ def subnetting():
             elif int(n_networks) < 2:
                 print(f"{red}Insira apenas números inteiros maiores que 1{normal}")
             elif int(n_networks) > 16777216:
-                print(f"{red}Atingiu o número máximo de redes possíveis para endereços IPv4{normal}")
+                print(f"{red}Atingiu o número máximo de redes possíveis para endereços IPv4 (16777216){normal}")
             else:
                 break
         except ValueError:
@@ -642,40 +642,44 @@ def subnetting():
     while True:
         try:
             network_ip = input("Insira o IPv4 da rede inicial (CIDR): ")
-            initial_network = ipaddress.ip_network(network_ip)
-            networks = {}
-            n_networks = int(n_networks)
-            # Calcula o número de hostID bits que vai ser necessário passar para o networkID
-            ## Segue uma função logarítmica de base 2, tendo em conta o número de redes pretendida
-            bits_needed = math.ceil(math.log2(n_networks))
-            next_prefix = initial_network.prefixlen + bits_needed
-            if next_prefix > 31:
-                print(f"{red}A rede inicial não pode ser divida em {n_networks} redes{normal}")
-            elif next_prefix == 31:
-                subnets = list(initial_network.subnets(new_prefix=next_prefix))
-                for netw in range(n_networks):
-                    networks[f'network_{netw}'] = {
-                        'network_mask': subnets[netw].netmask,
-                        'cidr': subnets[netw].prefixlen,
-                        'first_ip': subnets[netw][0],
-                        'last_ip': subnets[netw].broadcast_address
-                    }
-                    netw += 1
-                break
+            if network_ip == "":
+                print()
+                submenu()
             else:
-                subnets = list(initial_network.subnets(new_prefix=next_prefix))
-                for netw in range(n_networks):
-                    networks[f'network_{netw}'] = {
-                        'network_ip': subnets[netw],
-                        'network_mask': subnets[netw].netmask,
-                        'cidr': subnets[netw].prefixlen,
-                        'hosts': subnets[netw].num_addresses-2,
-                        'first_ip': subnets[netw][1],
-                        'last_ip': subnets[netw][-2],
-                        'broadcast_ip': subnets[netw].broadcast_address
-                    }
-                    netw += 1
-                break
+                initial_network = ipaddress.ip_network(network_ip)
+                networks = {}
+                n_networks = int(n_networks)
+                # Calcula o número de hostID bits que vai ser necessário passar para o networkID
+                ## Segue uma função logarítmica de base 2, tendo em conta o número de redes pretendida
+                bits_needed = math.ceil(math.log2(n_networks))
+                next_prefix = initial_network.prefixlen + bits_needed
+                if next_prefix > 31:
+                    print(f"{red}A rede inicial não pode ser divida em {n_networks} redes{normal}, tente um CIDR menor")
+                elif next_prefix == 31:
+                    subnets = list(initial_network.subnets(new_prefix=next_prefix))
+                    for netw in range(n_networks):
+                        networks[f'network_{netw}'] = {
+                            'network_mask': subnets[netw].netmask,
+                            'cidr': subnets[netw].prefixlen,
+                            'first_ip': subnets[netw][0],
+                            'last_ip': subnets[netw].broadcast_address
+                        }
+                        netw += 1
+                    break
+                else:
+                    subnets = list(initial_network.subnets(new_prefix=next_prefix))
+                    for netw in range(n_networks):
+                        networks[f'network_{netw}'] = {
+                            'network_ip': subnets[netw],
+                            'network_mask': subnets[netw].netmask,
+                            'cidr': subnets[netw].prefixlen,
+                            'hosts': subnets[netw].num_addresses-2,
+                            'first_ip': subnets[netw][1],
+                            'last_ip': subnets[netw][-2],
+                            'broadcast_ip': subnets[netw].broadcast_address
+                        }
+                        netw += 1
+                    break
         except (ValueError, UnboundLocalError, IndexError):
             print(f"{red}Insira um IP de rede (CIDR) válido{normal} (Ex:. 10.0.0.0/8)")
     counter = 0
@@ -715,6 +719,8 @@ def vlsm():
                 submenu()
             elif int(n_networks) < 2:
                 print(f"{red}Insira apenas números inteiros maiores que 1{normal}")
+            elif int(n_networks) > 16777216:
+                print(f"{red}Atingiu o número de redes possíveis para endereços de IPv4 (16777216){normal}")
             else:
                 break
         except ValueError:
@@ -724,12 +730,16 @@ def vlsm():
     for netw in range(n_networks):
         while True:
             try:
-                network_input = int(input(f"Dispositivos necessários para a rede {netw+1}: "))
-                if network_input < 1:
+                network_input = input(f"Dispositivos necessários para a rede {netw+1}: ")
+                if network_input == "":
+                    print()
+                    submenu()
+                elif int(network_input) < 1:
                     print(f"{red}Insira apenas números inteiros positivos{normal}")
-                elif network_input > 2147483646:
+                elif int(network_input) > 2147483646:
                     print(f"{red}Não é possível a divisão de redes com mais de 2147483646 dispositivos{normal}")
                 else:
+                    network_input = int(network_input)
                     networks[f'network_{netw}'] = {
                         'needed_hosts': network_input,
                         'needed_ips': network_input + 2,
@@ -743,7 +753,7 @@ def vlsm():
                     }
                 hosts_sum = sum(d['needed_hosts'] for d in networks.values() if d)
                 if hosts_sum > (4294967294-(n_networks*2)):
-                    print(f"{red}Atingiu o número máximo de IPs possíveis para endereços de IPv4, tente uma rede menor{normal}")
+                    print(f"{red}Atingiu o número máximo de IPs possíveis para endereços de IPv4{normal}")
                 else:
                     break
             except ValueError:

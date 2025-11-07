@@ -254,38 +254,42 @@ def subnetting():
     while True:
         try:
             network_ip = input("Enter the desired initial network IP(CIDR): ")
-            initial_network = ipaddress.ip_network(network_ip)
-            networks = {}
-            n_networks = int(n_networks)
-            bits_needed = math.ceil(math.log2(n_networks))
-            next_prefix = initial_network.prefixlen + bits_needed
-            if next_prefix > 31:
-                print(f"{red}The intial network cannot be divided in {n_networks} networks{normal}")
-            elif next_prefix == 31:
-                subnets = list(initial_network.subnets(new_prefix=next_prefix))
-                for netw in range(n_networks):
-                    networks[f'network_{netw}'] = {
-                        'network_mask': subnets[netw].netmask,
-                        'cidr': subnets[netw].prefixlen,
-                        'first_ip': subnets[netw][0],
-                        'last_ip': subnets[netw].broadcast_address
-                    }
-                    netw += 1
-                break
+            if network_ip == "":
+                print()
+                submenu()
             else:
-                subnets = list(initial_network.subnets(new_prefix=next_prefix))
-                for netw in range(n_networks):
-                    networks[f'network_{netw}'] = {
-                        'network_ip': subnets[netw],
-                        'network_mask': subnets[netw].netmask,
-                        'cidr': subnets[netw].prefixlen,
-                        'hosts': subnets[netw].num_addresses-2,
-                        'first_ip': subnets[netw][1],
-                        'last_ip': subnets[netw][-2],
-                        'broadcast_ip': subnets[netw].broadcast_address
-                    }
-                    netw += 1
-                break
+                initial_network = ipaddress.ip_network(network_ip)
+                networks = {}
+                n_networks = int(n_networks)
+                bits_needed = math.ceil(math.log2(n_networks))
+                next_prefix = initial_network.prefixlen + bits_needed
+                if next_prefix > 31:
+                    print(f"{red}The intial network cannot be divided in {n_networks} networks{normal}")
+                elif next_prefix == 31:
+                    subnets = list(initial_network.subnets(new_prefix=next_prefix))
+                    for netw in range(n_networks):
+                        networks[f'network_{netw}'] = {
+                            'network_mask': subnets[netw].netmask,
+                            'cidr': subnets[netw].prefixlen,
+                            'first_ip': subnets[netw][0],
+                            'last_ip': subnets[netw].broadcast_address
+                        }
+                        netw += 1
+                    break
+                else:
+                    subnets = list(initial_network.subnets(new_prefix=next_prefix))
+                    for netw in range(n_networks):
+                        networks[f'network_{netw}'] = {
+                            'network_ip': subnets[netw],
+                            'network_mask': subnets[netw].netmask,
+                            'cidr': subnets[netw].prefixlen,
+                            'hosts': subnets[netw].num_addresses-2,
+                            'first_ip': subnets[netw][1],
+                            'last_ip': subnets[netw][-2],
+                            'broadcast_ip': subnets[netw].broadcast_address
+                        }
+                        netw += 1
+                    break
         except (ValueError, UnboundLocalError, IndexError):
             print(f"{red}Only valid network IP(CIDR) allowed (Ex:. 10.0.0.0/8){normal}")
     counter = 0
@@ -333,10 +337,14 @@ def vlsm():
     for netw in range(n_networks):
         while True:
             try:
-                network_input = int(input(f"Hosts required for network {netw+1}: "))
-                if network_input < 1:
+                network_input = input(f"Hosts required for network {netw+1}: ")
+                if int(network_input) < 1:
                     print(f"{red}Only positive integers allowed{normal}")
+                elif n_networks == "":
+                    print()
+                    submenu()
                 else:
+                    network_input = int(network_input)
                     networks[f'network_{netw}'] = {
                         'needed_hosts': network_input,
                         'needed_ips': network_input + 2,
